@@ -1,0 +1,534 @@
+{
+    "$schema": "http://json-schema.org/draft-03/schema", 
+    "required": true, 
+    "type": "object", 
+    "id": "#", 
+    "properties": {
+        "conversation_state": {
+            "items": {
+                "required": true, 
+                "type": "object", 
+                "id": "0", 
+                "properties": {
+                    "conversation_id": {
+                        "required": true, 
+                        "type": "object", 
+                        "id": "conversation_id", 
+                        "properties": {
+                            "id": {
+                                "required": true, 
+                                "type": "string", 
+                                "id": "id"
+                            }
+                        }
+                    }, 
+                    "response_header": {
+                        "required": true, 
+                        "type": "object", 
+                        "id": "response_header", 
+                        "properties": {
+                            "status": {
+                                "required": true, 
+                                "type": "string", 
+                                "id": "status"
+                            }, 
+                            "debug_url": {
+                                "required": true, 
+                                "type": "string", 
+                                "id": "debug_url"
+                            }, 
+                            "current_server_time": {
+                                "required": true, 
+                                "type": "string", 
+                                "id": "current_server_time"
+                            }, 
+                            "request_trace_id": {
+                                "required": true, 
+                                "type": "string", 
+                                "id": "request_trace_id"
+                            }
+                        }
+                    }, 
+                    "conversation_state": {
+                        "required": true, 
+                        "type": "object", 
+                        "id": "conversation_state", 
+                        "properties": {
+                            "conversation_id": {
+                                "required": true, 
+                                "type": "object", 
+                                "id": "conversation_id", 
+                                "properties": {
+                                    "id": {
+                                        "required": true, 
+                                        "type": "string", 
+                                        "id": "id"
+                                    }
+                                }
+                            }, 
+                            "conversation": {
+                                "required": true, 
+                                "type": "object", 
+                                "id": "conversation", 
+                                "properties": {
+                                    "participant_data": {
+                                        "items": {
+                                            "required": true, 
+                                            "type": "object", 
+                                            "id": "0", 
+                                            "properties": {
+                                                "participant_type": {
+                                                    "required": true, 
+                                                    "type": "string", 
+                                                    "id": "participant_type"
+                                                }, 
+                                                "fallback_name": {
+                                                    "required": true, 
+                                                    "type": "string", 
+                                                    "id": "fallback_name"
+                                                }, 
+                                                "new_invitation_status": {
+                                                    "required": true, 
+                                                    "type": "string", 
+                                                    "id": "new_invitation_status"
+                                                }, 
+                                                "id": {
+                                                    "required": true, 
+                                                    "type": "object", 
+                                                    "id": "id", 
+                                                    "properties": {
+                                                        "gaia_id": {
+                                                            "required": true, 
+                                                            "type": "string", 
+                                                            "id": "gaia_id"
+                                                        }, 
+                                                        "chat_id": {
+                                                            "required": true, 
+                                                            "type": "string", 
+                                                            "id": "chat_id"
+                                                        }
+                                                    }
+                                                }, 
+                                                "invitation_status": {
+                                                    "required": true, 
+                                                    "type": "string", 
+                                                    "id": "invitation_status"
+                                                }
+                                            }
+                                        }, 
+                                        "required": true, 
+                                        "type": "array", 
+                                        "id": "participant_data"
+                                    }, 
+                                    "force_history_state": {
+                                        "required": true, 
+                                        "type": "string", 
+                                        "id": "force_history_state"
+                                    }, 
+                                    "read_state": {
+                                        "items": {
+                                            "required": true, 
+                                            "type": "object", 
+                                            "id": "0", 
+                                            "properties": {
+                                                "latest_read_timestamp": {
+                                                    "required": true, 
+                                                    "type": "string", 
+                                                    "id": "latest_read_timestamp"
+                                                }, 
+                                                "participant_id": {
+                                                    "required": true, 
+                                                    "type": "object", 
+                                                    "id": "participant_id", 
+                                                    "properties": {
+                                                        "gaia_id": {
+                                                            "required": true, 
+                                                            "type": "string", 
+                                                            "id": "gaia_id"
+                                                        }, 
+                                                        "chat_id": {
+                                                            "required": true, 
+                                                            "type": "string", 
+                                                            "id": "chat_id"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }, 
+                                        "required": true, 
+                                        "type": "array", 
+                                        "id": "read_state"
+                                    }, 
+                                    "id": {
+                                        "required": true, 
+                                        "type": "object", 
+                                        "id": "id", 
+                                        "properties": {
+                                            "id": {
+                                                "required": true, 
+                                                "type": "string", 
+                                                "id": "id"
+                                            }
+                                        }
+                                    }, 
+                                    "otr_toggle": {
+                                        "required": true, 
+                                        "type": "string", 
+                                        "id": "otr_toggle"
+                                    }, 
+                                    "fork_on_external_invite": {
+                                        "required": true, 
+                                        "type": "boolean", 
+                                        "id": "fork_on_external_invite"
+                                    }, 
+                                    "current_participant": {
+                                        "items": {
+                                            "required": true, 
+                                            "type": "object", 
+                                            "id": "0", 
+                                            "properties": {
+                                                "gaia_id": {
+                                                    "required": true, 
+                                                    "type": "string", 
+                                                    "id": "gaia_id"
+                                                }, 
+                                                "chat_id": {
+                                                    "required": true, 
+                                                    "type": "string", 
+                                                    "id": "chat_id"
+                                                }
+                                            }
+                                        }, 
+                                        "required": true, 
+                                        "type": "array", 
+                                        "id": "current_participant"
+                                    }, 
+                                    "has_active_hangout": {
+                                        "required": true, 
+                                        "type": "boolean", 
+                                        "id": "has_active_hangout"
+                                    }, 
+                                    "otr_status": {
+                                        "required": true, 
+                                        "type": "string", 
+                                        "id": "otr_status"
+                                    }, 
+                                    "network_type": {
+                                        "items": {
+                                            "required": true, 
+                                            "type": "string", 
+                                            "id": "0"
+                                        }, 
+                                        "required": true, 
+                                        "type": "array", 
+                                        "id": "network_type"
+                                    }, 
+                                    "type": {
+                                        "required": true, 
+                                        "type": "string", 
+                                        "id": "type"
+                                    }, 
+                                    "self_conversation_state": {
+                                        "required": true, 
+                                        "type": "object", 
+                                        "id": "self_conversation_state", 
+                                        "properties": {
+                                            "status": {
+                                                "required": true, 
+                                                "type": "string", 
+                                                "id": "status"
+                                            }, 
+                                            "notification_level": {
+                                                "required": true, 
+                                                "type": "string", 
+                                                "id": "notification_level"
+                                            }, 
+                                            "delivery_medium_option": {
+                                                "items": {
+                                                    "required": true, 
+                                                    "type": "object", 
+                                                    "id": "0", 
+                                                    "properties": {
+                                                        "delivery_medium": {
+                                                            "required": true, 
+                                                            "type": "object", 
+                                                            "id": "delivery_medium", 
+                                                            "properties": {
+                                                                "medium_type": {
+                                                                    "required": true, 
+                                                                    "type": "string", 
+                                                                    "id": "medium_type"
+                                                                }
+                                                            }
+                                                        }, 
+                                                        "current_default": {
+                                                            "required": true, 
+                                                            "type": "boolean", 
+                                                            "id": "current_default"
+                                                        }
+                                                    }
+                                                }, 
+                                                "required": true, 
+                                                "type": "array", 
+                                                "id": "delivery_medium_option"
+                                            }, 
+                                            "inviter_id": {
+                                                "required": true, 
+                                                "type": "object", 
+                                                "id": "inviter_id", 
+                                                "properties": {
+                                                    "gaia_id": {
+                                                        "required": true, 
+                                                        "type": "string", 
+                                                        "id": "gaia_id"
+                                                    }, 
+                                                    "chat_id": {
+                                                        "required": true, 
+                                                        "type": "string", 
+                                                        "id": "chat_id"
+                                                    }
+                                                }
+                                            }, 
+                                            "self_read_state": {
+                                                "required": true, 
+                                                "type": "object", 
+                                                "id": "self_read_state", 
+                                                "properties": {
+                                                    "latest_read_timestamp": {
+                                                        "required": true, 
+                                                        "type": "string", 
+                                                        "id": "latest_read_timestamp"
+                                                    }, 
+                                                    "participant_id": {
+                                                        "required": true, 
+                                                        "type": "object", 
+                                                        "id": "participant_id", 
+                                                        "properties": {
+                                                            "gaia_id": {
+                                                                "required": true, 
+                                                                "type": "string", 
+                                                                "id": "gaia_id"
+                                                            }, 
+                                                            "chat_id": {
+                                                                "required": true, 
+                                                                "type": "string", 
+                                                                "id": "chat_id"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }, 
+                                            "active_timestamp": {
+                                                "required": true, 
+                                                "type": "string", 
+                                                "id": "active_timestamp"
+                                            }, 
+                                            "sort_timestamp": {
+                                                "required": true, 
+                                                "type": "string", 
+                                                "id": "sort_timestamp"
+                                            }, 
+                                            "invite_timestamp": {
+                                                "required": true, 
+                                                "type": "string", 
+                                                "id": "invite_timestamp"
+                                            }, 
+                                            "view": {
+                                                "items": {
+                                                    "required": true, 
+                                                    "type": "string", 
+                                                    "id": "0"
+                                                }, 
+                                                "required": true, 
+                                                "type": "array", 
+                                                "id": "view"
+                                            }
+                                        }
+                                    }
+                                }
+                            }, 
+                            "event": {
+                                "items": {
+                                    "required": true, 
+                                    "type": "object", 
+                                    "id": "0", 
+                                    "properties": {
+                                        "event_otr": {
+                                            "required": true, 
+                                            "type": "string", 
+                                            "id": "event_otr"
+                                        }, 
+                                        "event_id": {
+                                            "required": true, 
+                                            "type": "string", 
+                                            "id": "event_id"
+                                        }, 
+                                        "timestamp": {
+                                            "required": true, 
+                                            "type": "string", 
+                                            "id": "timestamp"
+                                        }, 
+                                        "chat_message": {
+                                            "required": true, 
+                                            "type": "object", 
+                                            "id": "chat_message", 
+                                            "properties": {
+                                                "message_content": {
+                                                    "required": true, 
+                                                    "type": "object", 
+                                                    "id": "message_content", 
+                                                    "properties": {
+                                                        "segment": {
+                                                            "items": {
+                                                                "required": true, 
+                                                                "type": "object", 
+                                                                "id": "0", 
+                                                                "properties": {
+                                                                    "text": {
+                                                                        "required": true, 
+                                                                        "type": "string", 
+                                                                        "id": "text"
+                                                                    }, 
+                                                                    "formatting": {
+                                                                        "required": true, 
+                                                                        "type": "object", 
+                                                                        "id": "formatting", 
+                                                                        "properties": {
+                                                                            "italics": {
+                                                                                "required": true, 
+                                                                                "type": "boolean", 
+                                                                                "id": "italics"
+                                                                            }, 
+                                                                            "strikethrough": {
+                                                                                "required": true, 
+                                                                                "type": "boolean", 
+                                                                                "id": "strikethrough"
+                                                                            }, 
+                                                                            "bold": {
+                                                                                "required": true, 
+                                                                                "type": "boolean", 
+                                                                                "id": "bold"
+                                                                            }, 
+                                                                            "underline": {
+                                                                                "required": true, 
+                                                                                "type": "boolean", 
+                                                                                "id": "underline"
+                                                                            }
+                                                                        }
+                                                                    }, 
+                                                                    "type": {
+                                                                        "required": true, 
+                                                                        "type": "string", 
+                                                                        "id": "type"
+                                                                    }
+                                                                }
+                                                            }, 
+                                                            "required": true, 
+                                                            "type": "array", 
+                                                            "id": "segment"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }, 
+                                        "sender_id": {
+                                            "required": true, 
+                                            "type": "object", 
+                                            "id": "sender_id", 
+                                            "properties": {
+                                                "gaia_id": {
+                                                    "required": true, 
+                                                    "type": "string", 
+                                                    "id": "gaia_id"
+                                                }, 
+                                                "chat_id": {
+                                                    "required": true, 
+                                                    "type": "string", 
+                                                    "id": "chat_id"
+                                                }
+                                            }
+                                        }, 
+                                        "delivery_medium": {
+                                            "required": true, 
+                                            "type": "object", 
+                                            "id": "delivery_medium", 
+                                            "properties": {
+                                                "medium_type": {
+                                                    "required": true, 
+                                                    "type": "string", 
+                                                    "id": "medium_type"
+                                                }
+                                            }
+                                        }, 
+                                        "event_version": {
+                                            "required": true, 
+                                            "type": "string", 
+                                            "id": "event_version"
+                                        }, 
+                                        "conversation_id": {
+                                            "required": true, 
+                                            "type": "object", 
+                                            "id": "conversation_id", 
+                                            "properties": {
+                                                "id": {
+                                                    "required": true, 
+                                                    "type": "string", 
+                                                    "id": "id"
+                                                }
+                                            }
+                                        }, 
+                                        "self_event_state": {
+                                            "required": true, 
+                                            "type": "object", 
+                                            "id": "self_event_state", 
+                                            "properties": {
+                                                "notification_level": {
+                                                    "required": true, 
+                                                    "type": "string", 
+                                                    "id": "notification_level"
+                                                }, 
+                                                "user_id": {
+                                                    "required": true, 
+                                                    "type": "object", 
+                                                    "id": "user_id", 
+                                                    "properties": {
+                                                        "gaia_id": {
+                                                            "required": true, 
+                                                            "type": "string", 
+                                                            "id": "gaia_id"
+                                                        }, 
+                                                        "chat_id": {
+                                                            "required": true, 
+                                                            "type": "string", 
+                                                            "id": "chat_id"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }, 
+                                        "advances_sort_timestamp": {
+                                            "required": true, 
+                                            "type": "boolean", 
+                                            "id": "advances_sort_timestamp"
+                                        }, 
+                                        "event_type": {
+                                            "required": true, 
+                                            "type": "string", 
+                                            "id": "event_type"
+                                        }
+                                    }
+                                }, 
+                                "required": true, 
+                                "type": "array", 
+                                "id": "event"
+                            }
+                        }
+                    }
+                }
+            }, 
+            "required": true, 
+            "type": "array", 
+            "id": "conversation_state"
+        }
+    }
+}
