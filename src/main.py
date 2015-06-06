@@ -22,8 +22,12 @@ def main(argv):
     # hw.write()
 
     # compute stats
-    hs = HangoutStatistic(hg,"UgybBVlmYKlQ5IF4Ccl4AaABAQ")
+    hs = HangoutStatistic(hg,["UgybBVlmYKlQ5IF4Ccl4AaABAQ"])
     hs.run()
+
+    # dump stats
+    hsw = HangoutStatisticWriter(hs,'HangoutsStatistic.json')
+    hsw.write()
 
 if __name__ == '__main__':
     main(sys.argv)
