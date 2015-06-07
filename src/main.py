@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import sys
 import argparse
-from hangout import *
-from statistics import *
+from HangoutBO import *
+from HangoutIO import *
+from HangoutStatistic import *
+from HangoutStatisticWriter import *
 
 def main(argv):
     # declare parser
@@ -14,7 +17,7 @@ def main(argv):
     # declare object
     hg = Hangout()
     hr = HangoutReader(args.jsonfile,hg)
-    hw = HangoutWriter(hg,'Hangouts.csv')
+    hw = HangoutCsvWriter(hg,'Hangouts.csv')
 
     # read and describe
     hr.read()
@@ -26,7 +29,7 @@ def main(argv):
     hs.run()
 
     # dump stats
-    hsw = HangoutStatisticWriter(hs,'HangoutsStatistic.json')
+    hsw = HangoutStatisticJsonWriter(hs,'HangoutsStatistic.json')
     hsw.write()
 
 if __name__ == '__main__':

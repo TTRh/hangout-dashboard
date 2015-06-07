@@ -6,14 +6,12 @@ import nltk
 nltk.data.path.append('/home/pierre/app/nltk_data')
 import itertools
 import re
-from datetime import date,timedelta
+from datetime import datetime,date,timedelta
 from collections import *
 import json
 
-from hangout import *
-
 #####################
-# helper
+# helpers
 #####################
 
 RE_URL = re.compile(r'https?://[^ ]*')
@@ -301,18 +299,6 @@ class HangoutStatistic:
         self.update()
         print json.dumps(self.user_statistics["100004041546029582490"])
         print json.dumps(self.user_statistics["111122836618407997682"])
-
-
-class HangoutStatisticWriter:
-
-    def __init__(self,hangoutstatistic,filename):
-        self.hangoutstatistic = hangoutstatistic
-        self.filename = filename
-
-    def write(self):
-        with open(self.filename,'wb') as outfile:
-            result = map(None,self.hangoutstatistic.user_statistics.itervalues())
-            json.dump(result,outfile,indent=4)
 
 
 if __name__ == '__main__':
