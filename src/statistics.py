@@ -140,6 +140,7 @@ class HangoutStatistic:
         # init statistics
         stats = [
             "name", # username
+            # global counter
             "sum_events", # total number of events
             "sum_links", # total numbers of links
             "sum_words", # total number of words
