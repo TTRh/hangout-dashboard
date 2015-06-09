@@ -128,9 +128,6 @@ LANGUAGES
   color:#DA4336;
 }
 /*******************************************
-TODO : pick only what i need !
-*******************************************/
-/*******************************************
 EDUCATION
 *******************************************/
 #education{
@@ -139,23 +136,23 @@ EDUCATION
   padding: 1em 0;
   list-style: none;
 }
-#education:before {
-  width: 5px;
-  height: 100%;
-  position: absolute;
-  left: 25px;
-  top: 0;
-  content: ' ';
-  display: block;
-  background: #ec7263;
-  background: -moz-linear-gradient(top,  #ffffff 0%, #ec7263 7%, #ec7263 89%, #ffffff 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(7%,#ec7263), color-stop(89%,#ec7263), color-stop(100%,#ffffff));
-  background: -webkit-linear-gradient(top,  #ffffff 0%,#ec7263 7%,#ec7263 89%,#ffffff 100%);
-  background: -o-linear-gradient(top,  #ffffff 0%,#ec7263 7%,#ec7263 89%,#ffffff 100%);
-  background: -ms-linear-gradient(top,  #ffffff 0%,#ec7263 7%,#ec7263 89%,#ffffff 100%);
-  background: linear-gradient(to bottom,  #ffffff 0%,#ec7263 7%,#ec7263 89%,#ffffff 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff',GradientType=0 );
-}
+/* #education:before { */
+/*   width: 5px; */
+/*   height: 100%; */
+/*   position: absolute; */
+/*   left: 25px; */
+/*   top: 0; */
+/*   content: ' '; */
+/*   display: block; */
+/*   background: #ec7263; */
+/*   background: -moz-linear-gradient(top,  #ffffff 0%, #ec7263 7%, #ec7263 89%, #ffffff 100%); */
+/*   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(7%,#ec7263), color-stop(89%,#ec7263), color-stop(100%,#ffffff)); */
+/*   background: -webkit-linear-gradient(top,  #ffffff 0%,#ec7263 7%,#ec7263 89%,#ffffff 100%); */
+/*   background: -o-linear-gradient(top,  #ffffff 0%,#ec7263 7%,#ec7263 89%,#ffffff 100%); */
+/*   background: -ms-linear-gradient(top,  #ffffff 0%,#ec7263 7%,#ec7263 89%,#ffffff 100%); */
+/*   background: linear-gradient(to bottom,  #ffffff 0%,#ec7263 7%,#ec7263 89%,#ffffff 100%); */
+/*   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff',GradientType=0 ); */
+/* } */
 #education li{
   width: 100%;
   z-index: 2;
@@ -163,21 +160,27 @@ EDUCATION
   float: left;
 }
 #education .year{
-  width: 10%;
+  width: 15%;
   background: #fff;
-  padding: 10px;
+  padding: 10px 0 10px 5px;
   font-size: 1.5em;
   font-weight: 700;
   display: inline-block;
 }
 #education .description{
-  width: 80%;
+  width: 85%;
   display: inline-block;
   background: #eee;
   margin-bottom: 10px;
   position: relative;
   padding: 10px 10px 0 10px;
   border-bottom: 1px solid #ddd;
+  word-wrap: break-normal;
+  word-wrap: break-word;
+}
+#education .description span{
+  font-size: 0.9em;
+  opacity: 0.7;
 }
 #education .description:after {
   content: '';
@@ -206,25 +209,24 @@ EDUCATION
 /*******************************************
 EXPERIENCES
 *******************************************/
-.job{
+.activity{
   margin-bottom: 15px;
 }
-.job .where{
+.activity .what{
   font-size: 1.4em;
   font-weight: bold;
 }
-.job .year{
+.activity .how{
   font-size: 1.3em;
   opacity: 0.7;
 }
-.job .profession{
-  font-size: 1.6em;
-  font-weight: bold;
-}
-.job .description{
+.activity .description{
   font-size: 1.7em;
   line-height: 1.5em;
 }
+/*******************************************
+TODO : pick only what i need !
+*******************************************/
 /*******************************************
 SKILLS
 *******************************************/
@@ -310,23 +312,23 @@ HOBBIES
 /*******************************************
 MEDIA
 *******************************************/
-@media (min-width: 500px) {
-  #education .description{
-    width: 85%;
-  }
-}
-@media (min-width: 768px) {
-  #education .description{
-    width: 85%;
-  }
-}
-@media (min-width: 992px) {
-  #education .description{
-    width: 87%;
-  }
-}
-@media (min-width: 1200px) {
-  #education .description{
-    width: 90%;
-  }
-}
+/* @media (min-width: 500px) { */
+/*   #education .description{ */
+/*     width: 85%; */
+/*   } */
+/* } */
+/* @media (min-width: 768px) { */
+/*   #education .description{ */
+/*     width: 85%; */
+/*   } */
+/* } */
+/* @media (min-width: 992px) { */
+/*   #education .description{ */
+/*     width: 87%; */
+/*   } */
+/* } */
+/* @media (min-width: 1200px) { */
+/*   #education .description{ */
+/*     width: 90%; */
+/*   } */
+/* } */

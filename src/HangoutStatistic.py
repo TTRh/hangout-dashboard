@@ -17,6 +17,7 @@ import json
 RE_URL = re.compile(r'https?://[^ ]*')
 RE_SITE = re.compile(r'https?://([^/ ]*)/?')
 RE_WORDS = re.compile(r'\w+')
+RE_HASHTAGS = re.compile(r'#\w+')
 STOP = set(nltk.corpus.stopwords.words("french"))
 
 def extract_site(url):
@@ -132,7 +133,8 @@ class HangoutStatistic:
             "HMS_per_Ymd" : defaultdict(list),
             "links_per_site" : Counter(),
             "words" : Counter(),
-            "words_per_event" : []
+            "words_per_event" : [],
+            "events" : []
         }
         self.user_statistics_accumulator[user_id] = acc
         # init statistics
@@ -149,6 +151,7 @@ class HangoutStatistic:
             "main_site", # main site redirection
             "aliases", # list of alias
             "quotes", # list of quote
+            "hashtags", # list of quote
             "longest_word", # longuest words posted
             "longest_event", # longuest event text posted
             "avg_words_event", # avg number of words by event
@@ -183,6 +186,7 @@ class HangoutStatistic:
         # TODO : deal spy users
         if len(acc["event_per_YmdHMS"]) == 0:
             return
+
         # update statistics
         stats["sum_events"] = sum(acc["event_per_YmdHMS"].itervalues())
         stats["sum_links"] = sum(acc["links_per_site"].itervalues())
@@ -192,8 +196,14 @@ class HangoutStatistic:
         stats["sum_reference"] = gacc["words"][first_name] if first_name in gacc["words"] else 0
         stats["main_words"] = acc["words"].most_common(20)
         stats["main_site"] = acc["links_per_site"].most_common(10)
-        stats["aliases"] = None
+        # update alias - create regex with name and check if exist in all events
+        name,regex = stats["name"].split(' '),None
+        if len(name) == 2:
+            regex = re.compile(r''+ name[0] + '.*\w+.*' + name[1],re.IGNORECASE)
+        if regex is not None:
+            stats["aliases"] = { k : regex.search(text).group(0) for k,v in gacc["events"].iteritems() for text in v if regex.search(text) is not None }
         stats["quotes"] = None
+        stats["hashtags"] = [ RE_HASHTAGS.search(text).group(0) for text in acc["events"] if RE_HASHTAGS.search(text) is not None ]
         stats["longest_word"] = reduce(lambda x,y:x if len(x) > len(y) else y,acc["words"].iterkeys())
         stats["longest_event"] = None
         stats["avg_words_event"] = median_low(sorted(acc["words_per_event"]))
@@ -215,7 +225,8 @@ class HangoutStatistic:
         acc = {
             "event_per_Ym" : Counter(),
             "event_per_Ymd" : Counter(),
-            "words" : Counter()
+            "words" : Counter(),
+            "events" : defaultdict(list)
         }
         self.global_statistics_accumulator = acc
         # init statistics
@@ -242,10 +253,9 @@ class HangoutStatistic:
         for c_id in self.conversation_ids:
             c = self.hangout.get_conversation(c_id)
             for p in c.iter_participant():
-                if p in self.user_statistics:
-                    continue
-                self.init_user_statistics(p.get_id())
-                self.user_statistics[p.get_id()]["name"] = p.get_name()
+                if p not in self.user_statistics:
+                    self.init_user_statistics(p.get_id())
+                    self.user_statistics[p.get_id()]["name"] = p.get_name()
 
     def optimize(self):
         for c_id in self.conversation_ids:
@@ -262,13 +272,14 @@ class HangoutStatistic:
                 dt_YmdH = dt[:-4]
                 dt_HMS = dt[-6:]
                 dt_HM = dt[-6:-3] + '0' # by 10 minutes step
-                # update global accumulators
                 gacc = self.global_statistics_accumulator
+                stats = self.user_statistics[e.get_sender()]
+                uacc = self.user_statistics_accumulator[e.get_sender()]
+                # update global accumulators
                 gacc["event_per_Ym"][dt_Ym] += 1
                 gacc["event_per_Ymd"][dt_Ymd] += 1
+                gacc["events"][stats["name"]].append(text)
                 # update user accumulators
-                # events counter
-                uacc = self.user_statistics_accumulator[e.get_sender()]
                 uacc["event_per_Ym"][dt_Ym] += 1
                 uacc["event_per_Ymd"][dt_Ymd] += 1
                 uacc["event_per_YmdH"][dt_YmdH] += 1
@@ -277,7 +288,9 @@ class HangoutStatistic:
                 uacc["event_per_YmdHMS"][dt] += 1
                 # text accumulators
                 nwords = 0
-                for w in RE_WORDS.findall(RE_URL.sub('',text).lower()):
+                text_only = RE_URL.sub('',text)
+                uacc["events"].append(text_only)
+                for w in RE_WORDS.findall(text_only.lower()):
                     nwords += 1
                     if len(w) > 3 and w not in STOP:
                         uacc["words"][w] += 1
