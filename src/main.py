@@ -3,10 +3,10 @@
 
 import sys
 import argparse
-from HangoutBO import *
-from HangoutIO import *
-from HangoutStatistic import *
-from HangoutStatisticWriter import *
+from hangout import *
+from parser import *
+from writer import *
+from statistics import *
 
 def main(argv):
     # declare parser
@@ -25,7 +25,8 @@ def main(argv):
     # hw.write()
 
     # compute stats
-    hs = HangoutStatistic(hg,["UgybBVlmYKlQ5IF4Ccl4AaABAQ"])
+    hs = HangoutStatisticManager(hg)
+    hs.conversation_ids = ["UgybBVlmYKlQ5IF4Ccl4AaABAQ"]
     hs.run()
 
     # dump stats
