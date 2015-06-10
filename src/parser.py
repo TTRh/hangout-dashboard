@@ -1,6 +1,7 @@
 import json
 from hangout import *
 
+
 class HangoutReader:
 
     def __init__(self,jsonfile,hangout):

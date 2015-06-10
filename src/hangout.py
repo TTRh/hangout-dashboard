@@ -1,12 +1,5 @@
-#####################
-# standard import
-#####################
-
 from datetime import datetime
 
-#####################
-# hangout objects
-#####################
 
 class Participant:
 

@@ -1,7 +1,3 @@
-#####################
-# standard import
-#####################
-
 import nltk
 nltk.data.path.append('/home/pierre/app/nltk_data')
 import itertools
@@ -10,15 +6,15 @@ from datetime import datetime,date,timedelta
 from collections import *
 import json
 
-#####################
-# helpers
-#####################
+# regex helpers
 
 RE_URL = re.compile(r'https?://[^ ]*')
 RE_SITE = re.compile(r'https?://([^/ ]*)/?')
 RE_WORDS = re.compile(r'\w+')
 RE_HASHTAG = re.compile(r'#\w+')
 STOP = set(nltk.corpus.stopwords.words("french"))
+
+# function helpers
 
 def extract_site(url):
     # extract full domain name
@@ -36,21 +32,6 @@ def extract_site(url):
         result = p + '.' + result
     return result[:-1]
 
-# TODO: delete that
-def init_counter(counter,keyfunc=lambda k:k,valfunc=lambda x,y:x+y,default_type=None):
-    result = None
-    # init counter
-    if default_type is None:
-        result = Counter()
-    else:
-        result = defaultdict(default_type)
-    # fill counter
-    for k,v in counter.iteritems():
-        val = valfunc(result[keyfunc(k)],v)
-        if val is not None:
-            result[keyfunc(k)] = val
-    return result
-
 def mean(iterable):
     n,total = 0,0
     for v in iterable:
@@ -61,16 +42,6 @@ def mean(iterable):
     else:
         return float(total)/n
 
-# TODO: delete that
-def median(lst):
-    n = len(lst)
-    if n == 0:
-        return None
-    elif n % 2 == 0:
-        return float(lst[n/2-1] + lst[n/2])/2
-    else:
-        return lst[n/2]
-
 def median_low(lst):
     n = len(lst)
     if n == 0:
@@ -79,10 +50,6 @@ def median_low(lst):
         return lst[n/2-1]
     else:
         return lst[n/2]
-
-# TODO: detete that
-def strtime2seconds(strtime):
-    return int(strtime[:2])*3600 + int(strtime[2:5])*60 + int(strtime[-2:])
 
 def iter_months(ym1,ym2):
     y1,m1 = int(ym1[:-2]),int(ym1[-2:])
@@ -112,9 +79,7 @@ def iter_minutes(hm1,hm2,step=1):
                 stime = str(h*100+m)
                 yield '0'*(4-len(stime)) + stime
 
-#####################
-# statistic objects
-#####################
+# statistics objects
 
 class ParticipantSatistic:
 
@@ -336,33 +301,13 @@ class HangoutStatisticManager:
         for ps in self.participants.itervalues():
             ps.finalize(self.general)
 
+    def iter_participant(self):
+        for p in self.participants.itervalues():
+            yield p.statistic
+
     def run(self):
         self._init_statistics_metrics()
         self._scan_hangout()
         self._finalize()
         print json.dumps(self.participants["100004041546029582490"].statistic)
         print json.dumps(self.participants["111122836618407997682"].statistic)
-
-    def iter_participant(self):
-        for p in self.participants.itervalues():
-            yield p.statistic
-
-
-if __name__ == '__main__':
-
-    print map(None,iter_months("201501","201504"))
-    print map(None,iter_months("201501","201604"))
-    print map(None,iter_months("201501","201502"))
-    print map(None,iter_months("201701","201502"))
-
-    print map(None,iter_days('20150201','20150220'))
-
-    print map(None,iter_minutes('1010','1100'))
-    print map(None,iter_minutes('0000','2359',10))
-
-
-    print extract_site("http://www.dailymail.co.uk")
-    print extract_site("http://www.gfycat.com")
-    print extract_site("http://lh3.googleusercontent.com")
-    print extract_site("http://motherboard.vice.com")
-    print extract_site("http://i.giflike.com")

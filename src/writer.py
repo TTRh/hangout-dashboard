@@ -1,13 +1,7 @@
-#####################
-# standard import
-#####################
 import json
 import csv
 from jinja2 import Environment, FileSystemLoader
 
-#####################
-# writers
-#####################
 
 class HangoutStatisticHtmlWriter:
 
