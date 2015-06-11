@@ -6,6 +6,11 @@ FONTS
 SETTINGS
 *******************************************/
 @charset "utf-8";
+@-webkit-viewport   { width: device-width; }
+@-moz-viewport      { width: device-width; }
+@-ms-viewport       { width: device-width; }
+@-o-viewport        { width: device-width; }
+@viewport           { width: device-width; }
 /*******************************************
 BODY
 *******************************************/
@@ -113,7 +118,7 @@ SUMMARY
 /*******************************************
 LANGUAGES
 *******************************************/
-#language-skills .skill{
+#language-skills .word-count{
   font-size: 1.4em;
   padding-bottom: 2px;
   /* border-bottom: 1px solid #eee; */
@@ -127,16 +132,20 @@ LANGUAGES
   font-weight: 700;
   color:#DA4336;
 }
+#language-skills .item-skills{
+  height: 1px;
+  background: #F0563D;
+}
 /*******************************************
-EDUCATION
+EXTRACT
 *******************************************/
-#education{
+#extract{
   margin-top: 20px;
   position: relative;
   padding: 1em 0;
   list-style: none;
 }
-/* #education:before { */
+/* #extract:before { */
 /*   width: 5px; */
 /*   height: 100%; */
 /*   position: absolute; */
@@ -153,22 +162,22 @@ EDUCATION
 /*   background: linear-gradient(to bottom,  #ffffff 0%,#ec7263 7%,#ec7263 89%,#ffffff 100%); */
 /*   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff',GradientType=0 ); */
 /* } */
-#education li{
+#extract li{
   width: 100%;
   z-index: 2;
   position: relative;
   float: left;
 }
-#education .year{
-  width: 15%;
+#extract .year{
+  width: 10%;
   background: #fff;
-  padding: 10px 0 10px 5px;
+  padding: 10px;
   font-size: 1.5em;
   font-weight: 700;
   display: inline-block;
 }
-#education .description{
-  width: 85%;
+#extract .description{
+  width: 80%;
   display: inline-block;
   background: #eee;
   margin-bottom: 10px;
@@ -178,11 +187,11 @@ EDUCATION
   word-wrap: break-normal;
   word-wrap: break-word;
 }
-#education .description span{
+#extract .description span{
   font-size: 0.9em;
   opacity: 0.7;
 }
-#education .description:after {
+#extract .description:after {
   content: '';
   position: absolute;
   top: 15px;
@@ -195,13 +204,13 @@ EDUCATION
   border-width: 8px;
   pointer-events: none;
 }
-#education .description h3{
+#extract .description h3{
   font-size: 1.6em;
   margin: 0;
   padding: 0;
   font-weight: 700;
 }
-#education .description p{
+#extract .description p{
   font-size: 1.3em;
   margin-top: 5px;
   padding: 0;
@@ -225,12 +234,9 @@ EXPERIENCES
   line-height: 1.5em;
 }
 /*******************************************
-TODO : pick only what i need !
-*******************************************/
-/*******************************************
 SKILLS
 *******************************************/
-.item-skills{
+.skills .item-skills{
   height: 30px;
   background: #F0563D;
   color: #fff;
@@ -256,7 +262,7 @@ SKILLS
   background: #c6c6c6;
 }
 .skills-legend div{
-  width: 25%;
+  width: 20%;
   display: inline-block;
   font-size: 1.2em;
   color: #a9a9a9;
@@ -278,30 +284,31 @@ SKILLS
 .legend-right.legend:before{
   margin-right: 0;
 }
-.legend-left:nth-child(2) span{
-  margin-left: -25px;
-}
-.legend-right:nth-child(3) span{
-  margin-right: -20px;
-}
+/* .legend-left:nth-child(2) span{ */
+/*   margin-left: -20px; */
+/* } */
+/* .legend-right:nth-child(3) span{ */
+/*   margin-right: -20px; */
+/* } */
 .legend-right{
   text-align: right;
 }
 /*******************************************
-HOBBIES
+TROPHY
 *******************************************/
-.hobby{
-  color: #fff;
+.trophy{
+  /* color: #fff; */
+  color: #000;
   display: inline-block;
   margin-right: 5px;
   margin-bottom: 5px;
   padding: 5px 5px 5px 25px;
-  background: #A75265;
+  background: #f7bb29;
   position: relative;
   font-size: 1.2em;
 }
-.hobby:before{
-  content: "\f004";
+.trophy:before{
+  content: "\f091";
   font-family: FontAwesome;
   font-style: normal;
   font-weight: normal;
@@ -310,25 +317,36 @@ HOBBIES
   left: 7px;
 }
 /*******************************************
+TODO : pick only what i need !
+*******************************************/
+/*******************************************
 MEDIA
 *******************************************/
-/* @media (min-width: 500px) { */
-/*   #education .description{ */
-/*     width: 85%; */
-/*   } */
-/* } */
-/* @media (min-width: 768px) { */
-/*   #education .description{ */
-/*     width: 85%; */
-/*   } */
-/* } */
-/* @media (min-width: 992px) { */
-/*   #education .description{ */
-/*     width: 87%; */
-/*   } */
-/* } */
-/* @media (min-width: 1200px) { */
-/*   #education .description{ */
-/*     width: 90%; */
-/*   } */
-/* } */
+@media (min-width: 500px) {
+  #extract .description{
+    width: 85%;
+  }
+}
+@media (min-width: 768px) {
+  #extract .description{
+    width: 85%;
+  }
+}
+@media (min-width: 992px) {
+  #extract .description{
+    width: 87%;
+  }
+}
+@media (min-width: 1200px) {
+  #extract .description{
+    width: 90%;
+  }
+}
+/*******************************************
+BUGFIX
+*******************************************/
+.jqstooltip {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+}
