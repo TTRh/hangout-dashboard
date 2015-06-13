@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{user.name}}</title>
+    <!-- CSS -->
+    <link href="public/css/bootstrap.css" rel="stylesheet">
+    <link href="public/css/font-awesome.css" rel="stylesheet">
+    <link href="public/css/main.css" rel="stylesheet">
+  </head>
+  <!-- BODY -->
+  <body>
+    <div class="container">
+      <!-- HEADER -->
+      <div class="row">
+        <div class="col-xs-12">
+          {{ %include 'user/header.jinja.html' %}}
+        </div>
+      </div>
+      <!-- CONTENT -->
+      <div class="row">
+        <div class="col-xs-12 col-sm-7">
+          {{ %include 'user/trophy.jinja.html' %}}
+          {{ %include 'user/activity.jinja.html' %}}
+          {{ %include 'user/notable.jinja.html' %}}
+        <div class="col-xs-12 col-sm-5">
+          {{ %include 'user/summary.jinja.html' %}}
+          {{ %include 'user/skills.jinja.html' %}}
+          {{ %include 'user/words.jinja.html' %}}
+        </div>
+      </div>
+    </div>
+    <!-- JQUERY -->
+    <script src="public/js/jquery.min.js"></script>
+    <script src="public/js/jquery.sparkline.js"></script>
+    <!-- BOOTSTRAP -->
+    <script src="public/js/bootstrap.min.js"></script>
+    <!-- SCRIPTS -->
+    <script src="public/js/scripts.js"></script>
+  </body>
+</html>
+

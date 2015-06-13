@@ -84,6 +84,7 @@ def iter_minutes(hm1,hm2,step=1):
 class ParticipantSatistic:
 
     _metrics = [
+        "id", # user id - initialization
         "name", # username - initialization
         # global
         "sum_reference", # total number of user reference - global words counter
@@ -116,10 +117,14 @@ class ParticipantSatistic:
         "avg_min_time_event", # median low time of first daily event - default dict listed HMS per Ymd
     ]
 
+    _Statistic = collections.namedtuple('_Statistic',_metrics)
+
     def __init__(self,participant):
         self.participant = participant
         self.statistic = dict.fromkeys(self._metrics)
         # init some metrics
+        self.statistic["id"] = participant.id
+
         self.statistic["name"] = participant.name
         self.statistic["quotes"] = []
         self.statistic["aliases"] = []
@@ -230,7 +235,8 @@ class ParticipantSatistic:
             return
         self._finalize_simple_statistics()
         self._finalize_general_statistics(generalstatistic)
-
+        # transform statistic into named tuple
+        self.statistic = self._Statistic(**self.statistic)
 
 class GeneralStatistic:
 

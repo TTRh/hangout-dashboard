@@ -5,14 +5,19 @@ from jinja2 import Environment, FileSystemLoader
 
 class HangoutStatisticHtmlWriter:
 
-    def __init__(self,statistics,template_file):
-        self.statistics = statistics
-        self.env = Environment(loader=FileSystemLoader('.'))
-        self.template_file = template_file
+    _template_dir = "template"
+    _output_dir = "../web"
+    _views = lambda name:name + ".jinja.html"
 
-    def write(self):
-        self.template = self.env.get_template(self.template_file)
-        print self.template.render(foo="Hello World !")
+    def __init__(self,statistics):
+        self.statistics = statistics
+        self.env = Environment(loader=FileSystemLoader(self._template_dir))
+
+    def write(self,output_dir):
+        self.template = self.env.get_template(self._views("user/main"))
+        for user in self.statistics:
+            with open(self._output_dir + "/" + user.id + ".html",'wb') as outfile:
+                outfile.write(self.template.render(user=u))
 
 
 class HangoutStatisticJsonWriter:
@@ -54,3 +59,9 @@ class HangoutCsvWriter:
                     # number words
                     row.append(len(text.split()))
                     writer.writerow(row)
+
+if __name__ == '__main__':
+
+    env = Environment(loader=FileSystemLoader("template"))
+    template = env.get_template("test.html")
+    print template.render(foo="Arnaud Canu")
