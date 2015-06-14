@@ -16,6 +16,9 @@ STOP = set(nltk.corpus.stopwords.words("french"))
 
 # function helpers
 
+def pretty_time(stime):
+    return stime[:2] + ":" + stime[2:4]
+
 def extract_site(url):
     # extract full domain name
     dn = RE_SITE.search(url)
@@ -84,7 +87,7 @@ def iter_minutes(hm1,hm2,step=1):
 class ParticipantSatistic:
 
     _metrics = [
-        "id", # user id - initialization
+        "uid", # user id - initialization
         "name", # username - initialization
         # global
         "sum_reference", # total number of user reference - global words counter
@@ -92,7 +95,7 @@ class ParticipantSatistic:
         "quotes", # list of quote - apply quote parser on global events
         # incremental
         "sum_events", # total number of events - incremental
-        "sum_links", # total numbers of links - incremental
+        "sum_url", # total numbers of links - incremental
         "sum_words", # total number of words - incremental
         # text
         "sum_uniq_words", # total number of unique words (vocabulary) - set words
@@ -110,20 +113,18 @@ class ParticipantSatistic:
         "max_day_events", # max event in one day - event counter per Ymd
         "sparkline_sum_events_vs_day", # number of event per day - event counter per Ymd
         "max_hour_events", # max number of events posted in one hour - event counter per YmdH
-        "sparkline_avg_events_vs_time", # sum number of event per time in a day - event counter per YmdHM
+        "sparkline_sum_events_vs_time", # sum number of event per time in a day - event counter per YmdHM
         "max_time_event", # max time event - incremental / default dict listed HMS per Ymd
         "min_time_event", # min time event - incremental / default dict listed HMS per Ymd
         "avg_max_time_event",  # median low time of last daily event - default dict listed HMS per Ymd
         "avg_min_time_event", # median low time of first daily event - default dict listed HMS per Ymd
     ]
 
-    _Statistic = collections.namedtuple('_Statistic',_metrics)
-
     def __init__(self,participant):
         self.participant = participant
         self.statistic = dict.fromkeys(self._metrics)
         # init some metrics
-        self.statistic["id"] = participant.id
+        self.statistic["uid"] = participant.uid
 
         self.statistic["name"] = participant.name
         self.statistic["quotes"] = []
@@ -200,7 +201,7 @@ class ParticipantSatistic:
     def _finalize_simple_statistics(self):
         s = self.statistic
         s["sum_events"] = sum(self.acc_event_per_ym.itervalues())
-        s["sum_links"] = sum(self.acc_dns.itervalues())
+        s["sum_url"] = sum(self.acc_dns.itervalues())
         s["sum_words"] = sum(self.acc_words.itervalues())
         s["sum_uniq_words"] = len(self.acc_words)
         s["main_words"] = self.acc_words.most_common(20)
@@ -209,16 +210,16 @@ class ParticipantSatistic:
         s["longest_word"] = reduce(lambda x,y:x if len(x) > len(y) else y,self.acc_words.iterkeys())
         s["longest_event"] = None
         s["avg_words_event"] = mean(self.acc_words_per_event)
-        s["avg_day_events"] = mean(self.acc_event_per_ymd.itervalues())
+        s["avg_day_events"] = int(mean(self.acc_event_per_ymd.itervalues()))
         s["avg_day_links"] = None
         s["sum_days_with_event"] = len(self.acc_event_per_ymd)
         s["max_day_events"] = max(self.acc_event_per_ymd.itervalues())
         s["max_hour_events"] = max(self.acc_event_per_ymdh.itervalues())
-        s["sparkline_avg_events_vs_time"] = [ self.acc_event_per_hm[k] for k in iter_minutes('0000','2359',10) ]
+        s["sparkline_sum_events_vs_time"] = [ self.acc_event_per_hm[k] for k in iter_minutes('0000','2359',10) ]
         s["max_time_event"] = max(reduce(lambda x,y:x|y,self.acc_hms_per_ymd.itervalues()))
         s["min_time_event"] = min(reduce(lambda x,y:x|y,self.acc_hms_per_ymd.itervalues()))
-        s["avg_max_time_event"] = median_low(sorted([max(l) for l in self.acc_hms_per_ymd.itervalues()]))
-        s["avg_min_time_event"] = median_low(sorted([min(l) for l in self.acc_hms_per_ymd.itervalues()]))
+        s["avg_max_time_event"] = pretty_time(median_low(sorted([max(l) for l in self.acc_hms_per_ymd.itervalues()])))
+        s["avg_min_time_event"] = pretty_time(median_low(sorted([min(l) for l in self.acc_hms_per_ymd.itervalues()])))
 
     def _finalize_general_statistics(self,g):
         s = self.statistic
@@ -235,8 +236,7 @@ class ParticipantSatistic:
             return
         self._finalize_simple_statistics()
         self._finalize_general_statistics(generalstatistic)
-        # transform statistic into named tuple
-        self.statistic = self._Statistic(**self.statistic)
+
 
 class GeneralStatistic:
 

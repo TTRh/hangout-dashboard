@@ -1,21 +1,10 @@
 <!-- SUMMARY -->
 <div class="box clearfix">
   <h2>Summary</h2>
+  {% for key,value in descriptor.summary.iteritems() %}
   <div class="summary-item">
-    <div class="number pull-left text-center">8099</div>
-    <div class="description pull-right">total number of events</div>
+    <div class="number pull-left text-center">{{ user[key] }}</div>
+    <div class="description pull-right">{{ value }}</div>
   </div>
-  <div class="summary-item">
-    <div class="number pull-left text-center">4.5</div>
-    <div class="description pull-right">average number of events by day</div>
-  </div>
-  <div class="summary-item">
-    <div class="number pull-left text-center">10:15</div>
-    <div class="description pull-right">average time of first event</div>
-  </div>
-  <div class="summary-item">
-    <div class="number pull-left text-center">17:45</div>
-    <div class="description pull-right">average time of last event</div>
-  </div>
+  {% endfor %}
 </div>
-

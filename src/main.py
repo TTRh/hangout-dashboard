@@ -29,8 +29,12 @@ def main(argv):
     hs.run()
 
     # 4 - dump statistics
-    hsw = HangoutStatisticJsonWriter(hs,'HangoutsStatistic.json')
-    hsw.write()
+    hsw = HangoutStatisticJsonWriter(hs)
+    hsw.write('HangoutsStatistic.json')
+
+    # 5 - dump dashboard
+    hsd = HangoutStatisticHtmlWriter(hs)
+    hsd.write('../web')
 
 if __name__ == '__main__':
     main(sys.argv)

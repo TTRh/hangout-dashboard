@@ -1,45 +1,68 @@
 import json
 import csv
+from collections import namedtuple, OrderedDict
 from jinja2 import Environment, FileSystemLoader
 
 
 class HangoutStatisticHtmlWriter:
 
     _template_dir = "template"
-    _output_dir = "../web"
-    _views = lambda name:name + ".jinja.html"
+    _summary = OrderedDict([
+        ("sum_events" , "total number of events"),
+        ("avg_day_events" , "avg number of event per day"),
+        ("max_day_events" , "max event in one day"),
+        ("sum_url", "total number of urls"),
+        ("sum_words" , "total number of words"),
+        ("sum_uniq_words" , "total unique words"),
+        ("avg_min_time_event" , "avg first time event"),
+        ("avg_max_time_event" , "avg last time event"),
+        ("sum_reference" , "total number of name referenced")
+    ])
+    _descriptor = namedtuple('descriptor','summary')
 
     def __init__(self,statistics):
         self.statistics = statistics
         self.env = Environment(loader=FileSystemLoader(self._template_dir))
 
-    def write(self,output_dir):
+    def _views(self,name):
+        return name + ".jinja.html"
+
+    def _write_user(self,output_dir):
+        descriptor = self._descriptor(self._summary)
         self.template = self.env.get_template(self._views("user/main"))
-        for user in self.statistics:
-            with open(self._output_dir + "/" + user.id + ".html",'wb') as outfile:
-                outfile.write(self.template.render(user=u))
+        # for user in self.statistics.iter_participant():
+        user = self.statistics.participants["100004041546029582490"].statistic
+        with open(output_dir + "/" + user["uid"] + ".html",'wb') as outfile:
+            outfile.write(self.template.render(user=user,descriptor=descriptor))
+
+    def _write_overview(self,output_dir):
+        self.template = self.env.get_template(self._views("overview/main"))
+        with open(output_dir + "/index.html",'wb') as outfile:
+            outfile.write(self.template.render(overview=None))
+
+    def write(self,output_dir):
+        self._write_user(output_dir)
+        # self._write_overview(output_dir)
 
 
 class HangoutStatisticJsonWriter:
 
-    def __init__(self,statistics,filename):
+    def __init__(self,statistics):
         self.statistics = statistics
-        self.filename = filename
 
-    def write(self):
-        with open(self.filename,'wb') as outfile:
+    def write(self,filename):
+        with open(filename,'wb') as outfile:
             result = map(None,self.statistics.iter_participant())
             json.dump(result,outfile,indent=4)
 
 
 class HangoutCsvWriter:
 
-    def __init__(self,hangout,filename):
+    def __init__(self,hangout):
         self.hangout = hangout
-        self.filename = filename
 
-    def write(self):
-        with open(self.filename,'wb') as csv_data:
+    def write(self,filename):
+        with open(filename,'wb') as csv_data:
             writer = csv.writer(csv_data,delimiter=';',quoting=csv.QUOTE_NONNUMERIC)
             for c in self.hangout.iter_conversation():
                 for e in c.get_sorted_events():
