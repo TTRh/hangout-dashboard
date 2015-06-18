@@ -1,0 +1,12 @@
+GENERAL:
+  - raw data
+    * conversion_id,user_id,user_name,timestamp,message
+    @ Added [Thu 2015-06-18]
+  - consolidation
+    * use others conversation to fetch username
+    @ Added [Thu 2015-06-18]
+  - vizualization
+    * scatte plot with multi user ?
+    * profil card with nice stats by users
+    @ Added [Thu 2015-06-18]
+  
