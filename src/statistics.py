@@ -125,8 +125,8 @@ class ParticipantSatistic:
         self.statistic = dict.fromkeys(self._metrics)
         # init some metrics
         self.statistic["uid"] = participant.uid
-
         self.statistic["name"] = participant.name
+
         self.statistic["quotes"] = []
         self.statistic["aliases"] = []
         self.statistic["sum_reference"] = 0
@@ -210,7 +210,7 @@ class ParticipantSatistic:
         s["longest_word"] = reduce(lambda x,y:x if len(x) > len(y) else y,self.acc_words.iterkeys())
         s["longest_event"] = None
         s["avg_words_event"] = mean(self.acc_words_per_event)
-        s["avg_day_events"] = int(mean(self.acc_event_per_ymd.itervalues()))
+        s["avg_day_events"] = mean(self.acc_event_per_ymd.itervalues())
         s["avg_day_links"] = None
         s["sum_days_with_event"] = len(self.acc_event_per_ymd)
         s["max_day_events"] = max(self.acc_event_per_ymd.itervalues())
@@ -218,8 +218,8 @@ class ParticipantSatistic:
         s["sparkline_sum_events_vs_time"] = [ self.acc_event_per_hm[k] for k in iter_minutes('0000','2359',10) ]
         s["max_time_event"] = max(reduce(lambda x,y:x|y,self.acc_hms_per_ymd.itervalues()))
         s["min_time_event"] = min(reduce(lambda x,y:x|y,self.acc_hms_per_ymd.itervalues()))
-        s["avg_max_time_event"] = pretty_time(median_low(sorted([max(l) for l in self.acc_hms_per_ymd.itervalues()])))
-        s["avg_min_time_event"] = pretty_time(median_low(sorted([min(l) for l in self.acc_hms_per_ymd.itervalues()])))
+        s["avg_max_time_event"] = median_low(sorted([max(l) for l in self.acc_hms_per_ymd.itervalues()]))
+        s["avg_min_time_event"] = median_low(sorted([min(l) for l in self.acc_hms_per_ymd.itervalues()]))
 
     def _finalize_general_statistics(self,g):
         s = self.statistic
@@ -306,6 +306,9 @@ class HangoutStatisticManager:
         self.general.finalize()
         for ps in self.participants.itervalues():
             ps.finalize(self.general)
+        # remove inactive users
+        self.participants = { uid:p for uid,p in self.participants.iteritems() if p.statistic["sum_events"] > 0  }
+
 
     def iter_participant(self):
         for p in self.participants.itervalues():

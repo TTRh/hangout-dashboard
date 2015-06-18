@@ -7,18 +7,6 @@ from jinja2 import Environment, FileSystemLoader
 class HangoutStatisticHtmlWriter:
 
     _template_dir = "template"
-    _summary = OrderedDict([
-        ("sum_events" , "total number of events"),
-        ("avg_day_events" , "avg number of event per day"),
-        ("max_day_events" , "max event in one day"),
-        ("sum_url", "total number of urls"),
-        ("sum_words" , "total number of words"),
-        ("sum_uniq_words" , "total unique words"),
-        ("avg_min_time_event" , "avg first time event"),
-        ("avg_max_time_event" , "avg last time event"),
-        ("sum_reference" , "total number of name referenced")
-    ])
-    _descriptor = namedtuple('descriptor','summary')
 
     def __init__(self,statistics):
         self.statistics = statistics
@@ -28,12 +16,11 @@ class HangoutStatisticHtmlWriter:
         return name + ".jinja.html"
 
     def _write_user(self,output_dir):
-        descriptor = self._descriptor(self._summary)
         self.template = self.env.get_template(self._views("user/main"))
-        # for user in self.statistics.iter_participant():
-        user = self.statistics.participants["100004041546029582490"].statistic
-        with open(output_dir + "/" + user["uid"] + ".html",'wb') as outfile:
-            outfile.write(self.template.render(user=user,descriptor=descriptor))
+        for user in self.statistics.iter_participant():
+        # user = self.statistics.participants["100004041546029582490"].statistic
+            with open(output_dir + "/" + user["uid"] + ".html",'wb') as outfile:
+                outfile.write(self.template.render(user=user).encode('utf8'))
 
     def _write_overview(self,output_dir):
         self.template = self.env.get_template(self._views("overview/main"))

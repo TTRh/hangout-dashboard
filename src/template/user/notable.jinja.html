@@ -25,9 +25,7 @@
       <div class="description pull-right">
         <h3>hashtag(s) used</h3>
         <p>
-          {% for item in user.hashtags %}
-          {{ item[0] + " " }}
-          {% endfor %}
+          {{ user.hashtags|map(attribute='0')|join(' ') }}
         </p>
       </div>
     </li>

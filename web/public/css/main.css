@@ -121,7 +121,7 @@ LANGUAGES
 #language-skills .word-count{
   font-size: 1.4em;
   padding-bottom: 2px;
-  /* border-bottom: 1px solid #eee; */
+  border-bottom: 1px solid #eee;
 }
 #language-skills .progress{
   height: 1px;
