@@ -7,12 +7,16 @@ from collections import *
 import json
 
 # regex helpers
+STOP = set(nltk.corpus.stopwords.words("french"))
 
 RE_URL = re.compile(r'https?://[^ ]*')
 RE_SITE = re.compile(r'https?://([^/ ]*)/?')
 RE_WORDS = re.compile(r'\w+')
 RE_HASHTAG = re.compile(r'#\w+')
-STOP = set(nltk.corpus.stopwords.words("french"))
+
+RE_LAUGH = re.compile(r'ahah|haha|mdr|excellent|lol|.norme|xD|:D|\^\^',re.IGNORECASE)
+RE_CAFE = re.compile(r'caf.+',re.IGNORECASE)
+RE_CHOUQUETTE = re.compile(r'chouquette',re.IGNORECASE)
 
 # function helpers
 
@@ -82,6 +86,13 @@ def iter_minutes(hm1,hm2,step=1):
                 stime = str(h*100+m)
                 yield '0'*(4-len(stime)) + stime
 
+
+def iter_words(text):
+    tokens = RE_WORDS.findall(text.lower())
+    for w in tokens:
+        if len(w) > 3 and w not in STOP:
+            yield w
+
 # statistics objects
 
 class ParticipantSatistic:
@@ -95,16 +106,22 @@ class ParticipantSatistic:
         "quotes", # list of quote - apply quote parser on global events
         # incremental
         "sum_events", # total number of events - incremental
+        "perc_events" # percentage of events over total events
         "sum_url", # total numbers of links - incremental
         "sum_words", # total number of words - incremental
         # text
+        "sum_characters", # total number of characters - incremental
+        "avg_characters_event", # avg number of characters by events
         "sum_uniq_words", # total number of unique words (vocabulary) - set words
         "main_words", # main words - words counter
         "main_site", # main site redirection - incremental site parser and site counter
         "hashtags", # main hashtag - incremental hashtag parser and hashtag counter
-        "longest_word", # longuest words posted - incremental / set words
+        "longest_words", # longuest words posted - incremental / set words
         "longest_event", # longuest event text posted - incremental / list events
         "avg_words_event", # avg number of words by event - list nb words/event
+        "sum_laughs", # total number of laughs
+        "sum_cafe", # total number of cafe call
+        "sum_chouquette", # total number of chouquette call
         # events counter
         "sparkline_sum_events_vs_month", # sum of event per month - event counter per Ym
         "avg_day_events", # avg number of event by day - event counter per Ymd
@@ -122,14 +139,19 @@ class ParticipantSatistic:
 
     def __init__(self,participant):
         self.participant = participant
-        self.statistic = dict.fromkeys(self._metrics)
+        s = dict.fromkeys(self._metrics)
+        # set user info
+        s["uid"] = participant.uid
+        s["name"] = participant.name
         # init some metrics
-        self.statistic["uid"] = participant.uid
-        self.statistic["name"] = participant.name
-
-        self.statistic["quotes"] = []
-        self.statistic["aliases"] = []
-        self.statistic["sum_reference"] = 0
+        s["quotes"] = []
+        s["aliases"] = []
+        s["sum_reference"] = 0
+        s["sum_characters"] = 0
+        s["sum_laughs"] = 0
+        s["sum_cafe"] = 0
+        s["sum_chouquette"] = 0
+        self.statistic = s
         # init accumulators
         self.acc_event_per_ym = Counter()
         self.acc_event_per_ymd = Counter()
@@ -140,7 +162,7 @@ class ParticipantSatistic:
         self.acc_hashtags = Counter()
         self.acc_words = Counter()
         self.acc_words_per_event = []
-        # compile specific regex
+        # compile username dependent regex
         name = self.participant.name.split(' ')
         self.re_reference = re.compile(name[0],re.IGNORECASE)
         if len(name) == 2:
@@ -164,7 +186,11 @@ class ParticipantSatistic:
     def _update_text_statistics(self,e):
         content = e.get_text()
         text = RE_URL.sub('',content)
+        s = self.statistic
+        # number of characters
+        s["sum_characters"] += len(content)
         # extract words
+        # TODO: use iter words function
         words = RE_WORDS.findall(text.lower())
         if len(words) > 0:
             self.acc_words_per_event.append(len(words))
@@ -177,8 +203,12 @@ class ParticipantSatistic:
             if site is not None:
                 self.acc_dns[site] += 1
         # extract hashtag
-        for hashtag in RE_HASHTAG.findall(content):
+        for hashtag in RE_HASHTAG.findall(text):
             self.acc_hashtags[hashtag] += 1
+        # count specific flag
+        s["sum_laughs"] += len(RE_LAUGH.findall(text))
+        s["sum_cafe"] += len(RE_CAFE.findall(text))
+        s["sum_chouquette"] += len(RE_CHOUQUETTE.findall(text))
 
     def _update_general_statistics(self,e):
         s = self.statistic
@@ -202,12 +232,14 @@ class ParticipantSatistic:
         s = self.statistic
         s["sum_events"] = sum(self.acc_event_per_ym.itervalues())
         s["sum_url"] = sum(self.acc_dns.itervalues())
+        s["avg_characters_event"] = 1.0*s["sum_characters"]/s["sum_events"]
+        s["sum_words"] = sum(self.acc_words.itervalues())
         s["sum_words"] = sum(self.acc_words.itervalues())
         s["sum_uniq_words"] = len(self.acc_words)
         s["main_words"] = self.acc_words.most_common(20)
         s["main_site"] = self.acc_dns.most_common(10)
         s["hashtags"] = self.acc_hashtags.most_common(50)
-        s["longest_word"] = reduce(lambda x,y:x if len(x) > len(y) else y,self.acc_words.iterkeys())
+        s["longest_words"] = sorted(self.acc_words.iterkeys(),key=lambda x:len(x),reverse=True)[:10]
         s["longest_event"] = None
         s["avg_words_event"] = mean(self.acc_words_per_event)
         s["avg_day_events"] = mean(self.acc_event_per_ymd.itervalues())
@@ -224,6 +256,8 @@ class ParticipantSatistic:
     def _finalize_general_statistics(self,g):
         s = self.statistic
         gs = g.statistic
+        # update global indicators
+        s["perc_events"] = 1.0*s["sum_events"]/gs["sum_events"]
         # update sparkline with global scale
         s["sparkline_sum_events_vs_month"] = [ self.acc_event_per_ym[str(k)] for k in iter_months(gs["min_ym"],gs["max_ym"]) ]
         s["sparkline_sum_events_vs_day"] = [ self.acc_event_per_ymd[k] for k in iter_days(gs["min_ymd"],gs["max_ymd"]) ]
@@ -246,7 +280,8 @@ class GeneralStatistic:
         "max_ymd",
         "min_ymd",
         "sum_events",
-        "participants"
+        "participants",
+        "main_words"
     ]
 
     def __init__(self):
@@ -254,6 +289,7 @@ class GeneralStatistic:
         self.statistic["participants"] = {}
         self.acc_event_per_ym = Counter()
         self.acc_event_per_ymd = Counter()
+        self.acc_words = Counter()
 
     def add_participant(self,p):
         self.statistic["participants"][p.uid] = p.name
@@ -264,6 +300,11 @@ class GeneralStatistic:
         ymd = dt[:8]
         self.acc_event_per_ym[ym] += 1
         self.acc_event_per_ymd[ymd] += 1
+        # text statistics
+        content = event.get_text()
+        text = RE_URL.sub('',content)
+        for w in iter_words(text):
+            self.acc_words[w] += 1
 
     def finalize(self):
         s = self.statistic
@@ -272,6 +313,7 @@ class GeneralStatistic:
         s["max_ymd"] = max(self.acc_event_per_ymd.iterkeys())
         s["min_ymd"] = min(self.acc_event_per_ymd.iterkeys())
         s["sum_events"] = sum(self.acc_event_per_ym.itervalues())
+        s["main_words"] = self.acc_words.most_common(20)
 
 
 class HangoutStatisticManager:

@@ -1,21 +1,10 @@
 <!-- SUMMARY -->
 
-{% macro item(value,description) -%}
-  <div class="summary-item">
-    <div class="number pull-left text-center">{{ value }}</div>
-    <div class="description pull-right">{{ description }}</div>
-  </div>
-{%- endmacro %}
-
 <div class="box clearfix">
   <h2>Summary</h2>
+  {{ item((100*user.perc_events)|round(1)|string + "%", "global participation percentage") }}
   {{ item(user.sum_events, "total number of events") }}
-  {{ item(user.avg_day_events|round(1), "average number of event per day") }}
-  {{ item(user.max_day_events, "max event in one day") }}
-  {{ item(user.sum_url,"total number of urls") }}
+  {{ item(user.sum_characters,"total number of characters") }}
+  {{ item(user.avg_characters_event|int,"average event lenght ") }}
   {{ item(user.sum_words,"total number of words") }}
-  {{ item(user.sum_uniq_words,"total unique words") }}
-  {{ item(user.avg_min_time_event|slice(3)|map('join')|join(':')|truncate(5,True,''),"avg first time event") }}
-  {{ item(user.avg_max_time_event|slice(3)|map('join')|join(':')|truncate(5,True,''),"avg last time event") }}
-  {{ item(user.sum_reference,"total number of name referenced") }}
 </div>

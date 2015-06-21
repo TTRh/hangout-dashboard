@@ -5,7 +5,7 @@
   </div>
   <!-- NAME -->
   <div id="text-header">
-    <h1><span>{{ user.name.split(" ")[0] }}</span> {{ ' '.join(user.name.split(" ")[1:]) }}</h1>
+    <h1><span>{{ user.name.split(' ')[0] }}</span> {{ user.name.split(' ')[1:]|join(' ') }}</h1>
   </div>
 </div>
 
