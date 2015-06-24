@@ -2,9 +2,9 @@
 
 <div class="box clearfix">
   <h2>Summary</h2>
-  {{ item((100*user.perc_events)|round(1)|string + "%", "global participation percentage") }}
-  {{ item(user.sum_events, "total number of events") }}
-  {{ item(user.sum_characters,"total number of characters") }}
-  {{ item(user.avg_characters_event|int,"average event lenght ") }}
-  {{ item(user.sum_words,"total number of words") }}
+  {{ item((100*metrics.perc_events)|round(1)|string + "%", "global participation percentage") }}
+  {{ item(metrics.sum_events, "total number of events") }}
+  {{ item(metrics.sum_characters,"total number of characters") }}
+  {{ item(metrics.avg_characters_event|int,"average event lenght ") }}
+  {{ item(metrics.sum_words,"total number of words") }}
 </div>

@@ -15,7 +15,7 @@ RE_WORDS = re.compile(r'\w+')
 RE_HASHTAG = re.compile(r'#\w+')
 
 RE_LAUGH = re.compile(r'ahah|haha|mdr|excellent|lol|.norme|xD|:D|\^\^',re.IGNORECASE)
-RE_CAFE = re.compile(r'caf.+',re.IGNORECASE)
+RE_COFFEE = re.compile(r'caf.+',re.IGNORECASE)
 RE_CHOUQUETTE = re.compile(r'chouquette',re.IGNORECASE)
 
 # function helpers
@@ -116,11 +116,12 @@ class ParticipantSatistic:
         "main_words", # main words - words counter
         "main_site", # main site redirection - incremental site parser and site counter
         "hashtags", # main hashtag - incremental hashtag parser and hashtag counter
+        "sum_hashtags", # main hashtag - incremental hashtag parser and hashtag counter
         "longest_words", # longuest words posted - incremental / set words
         "longest_event", # longuest event text posted - incremental / list events
         "avg_words_event", # avg number of words by event - list nb words/event
         "sum_laughs", # total number of laughs
-        "sum_cafe", # total number of cafe call
+        "sum_coffee", # total number of coffee call
         "sum_chouquette", # total number of chouquette call
         # events counter
         "sparkline_sum_events_vs_month", # sum of event per month - event counter per Ym
@@ -137,6 +138,21 @@ class ParticipantSatistic:
         "avg_min_time_event", # median low time of first daily event - default dict listed HMS per Ymd
     ]
 
+    _ranked_metrics = {
+        "sum_reference": True,
+        "sum_events": True,
+        "sum_url": True,
+        "sum_words": True,
+        "sum_uniq_words": True,
+        "sum_characters": True,
+        "sum_hashtags" : True,
+        "sum_laughs": True,
+        "sum_coffee": True,
+        "sum_chouquette": True,
+        "avg_max_time_event": True,
+        "avg_min_time_event": False
+    }
+
     def __init__(self,participant):
         self.participant = participant
         s = dict.fromkeys(self._metrics)
@@ -149,9 +165,9 @@ class ParticipantSatistic:
         s["sum_reference"] = 0
         s["sum_characters"] = 0
         s["sum_laughs"] = 0
-        s["sum_cafe"] = 0
+        s["sum_coffee"] = 0
         s["sum_chouquette"] = 0
-        self.statistic = s
+        self.metrics = s
         # init accumulators
         self.acc_event_per_ym = Counter()
         self.acc_event_per_ymd = Counter()
@@ -169,8 +185,10 @@ class ParticipantSatistic:
             self.re_alias = re.compile(r'' + name[0] + '.*\w+.*' + name[1],re.IGNORECASE)
         else:
             self.re_alias = re.compile(r'' + name[0] + '\w+',re.IGNORECASE)
+        # init ranked_metrics
+        self.rankings = dict.fromkeys(self._ranked_metrics.keys())
 
-    def _update_simple_statistics(self,e):
+    def _update_simple_metrics(self,e):
         dt = e.get_datetime()
         ym = dt[:6]
         ymd = dt[:8]
@@ -183,10 +201,10 @@ class ParticipantSatistic:
         self.acc_event_per_hm[hm] += 1
         self.acc_hms_per_ymd[ymd].add(hms)
 
-    def _update_text_statistics(self,e):
+    def _update_text_metrics(self,e):
         content = e.get_text()
         text = RE_URL.sub('',content)
-        s = self.statistic
+        s = self.metrics
         # number of characters
         s["sum_characters"] += len(content)
         # extract words
@@ -207,11 +225,11 @@ class ParticipantSatistic:
             self.acc_hashtags[hashtag] += 1
         # count specific flag
         s["sum_laughs"] += len(RE_LAUGH.findall(text))
-        s["sum_cafe"] += len(RE_CAFE.findall(text))
+        s["sum_coffee"] += len(RE_COFFEE.findall(text))
         s["sum_chouquette"] += len(RE_CHOUQUETTE.findall(text))
 
-    def _update_general_statistics(self,e):
-        s = self.statistic
+    def _update_general_metrics(self,e):
+        s = self.metrics
         content = e.get_text()
         # update aliases
         alias = self.re_alias.search(content)
@@ -223,13 +241,13 @@ class ParticipantSatistic:
             s["sum_reference"] += 1
 
     def update(self,event):
-        self._update_general_statistics(event)
+        self._update_general_metrics(event)
         if event.sender == self.participant.uid:
-            self._update_simple_statistics(event)
-            self._update_text_statistics(event)
+            self._update_simple_metrics(event)
+            self._update_text_metrics(event)
 
-    def _finalize_simple_statistics(self):
-        s = self.statistic
+    def _finalize_simple_metrics(self):
+        s = self.metrics
         s["sum_events"] = sum(self.acc_event_per_ym.itervalues())
         s["sum_url"] = sum(self.acc_dns.itervalues())
         s["avg_characters_event"] = 1.0*s["sum_characters"]/s["sum_events"]
@@ -238,6 +256,7 @@ class ParticipantSatistic:
         s["sum_uniq_words"] = len(self.acc_words)
         s["main_words"] = self.acc_words.most_common(20)
         s["main_site"] = self.acc_dns.most_common(10)
+        s["sum_hashtags"] = len(self.acc_hashtags)
         s["hashtags"] = self.acc_hashtags.most_common(50)
         s["longest_words"] = sorted(self.acc_words.iterkeys(),key=lambda x:len(x),reverse=True)[:10]
         s["longest_event"] = None
@@ -253,9 +272,9 @@ class ParticipantSatistic:
         s["avg_max_time_event"] = median_low(sorted([max(l) for l in self.acc_hms_per_ymd.itervalues()]))
         s["avg_min_time_event"] = median_low(sorted([min(l) for l in self.acc_hms_per_ymd.itervalues()]))
 
-    def _finalize_general_statistics(self,g):
-        s = self.statistic
-        gs = g.statistic
+    def _finalize_general_metrics(self,g):
+        s = self.metrics
+        gs = g.metrics
         # update global indicators
         s["perc_events"] = 1.0*s["sum_events"]/gs["sum_events"]
         # update sparkline with global scale
@@ -264,12 +283,12 @@ class ParticipantSatistic:
         # transform participant reference uid to full name
         s["aliases"] = [ (alias,gs["participants"][p_id]) for alias,p_id in s["aliases"] ]
 
-    def finalize(self,generalstatistic):
+    def finalize(self,generalmetrics):
         # TODO : deal with "spy" users
         if len(self.acc_event_per_ym) == 0:
             return
-        self._finalize_simple_statistics()
-        self._finalize_general_statistics(generalstatistic)
+        self._finalize_simple_metrics()
+        self._finalize_general_metrics(generalmetrics)
 
 
 class GeneralStatistic:
@@ -285,14 +304,14 @@ class GeneralStatistic:
     ]
 
     def __init__(self):
-        self.statistic = dict.fromkeys(self._metrics)
-        self.statistic["participants"] = {}
+        self.metrics = dict.fromkeys(self._metrics)
+        self.metrics["participants"] = {}
         self.acc_event_per_ym = Counter()
         self.acc_event_per_ymd = Counter()
         self.acc_words = Counter()
 
     def add_participant(self,p):
-        self.statistic["participants"][p.uid] = p.name
+        self.metrics["participants"][p.uid] = p.name
 
     def update(self,event):
         dt = event.get_datetime()
@@ -300,14 +319,14 @@ class GeneralStatistic:
         ymd = dt[:8]
         self.acc_event_per_ym[ym] += 1
         self.acc_event_per_ymd[ymd] += 1
-        # text statistics
+        # text metrics
         content = event.get_text()
         text = RE_URL.sub('',content)
         for w in iter_words(text):
             self.acc_words[w] += 1
 
     def finalize(self):
-        s = self.statistic
+        s = self.metrics
         s["max_ym"] = max(self.acc_event_per_ym.iterkeys())
         s["min_ym"] = min(self.acc_event_per_ym.iterkeys())
         s["max_ymd"] = max(self.acc_event_per_ymd.iterkeys())
@@ -324,7 +343,7 @@ class HangoutStatisticManager:
         self.general = None
         self.participants = {}
 
-    def _init_statistics_metrics(self):
+    def _init_statistics_item(self):
         self.general = GeneralStatistic()
         for uid in self.conversation_ids:
             c = self.hangout.get_conversation(uid)
@@ -340,25 +359,36 @@ class HangoutStatisticManager:
                 # TODO : deal unknow users
                 if e.sender not in self.participants:
                     continue
+                # update accumulators
                 self.general.update(e)
                 for ps in self.participants.itervalues():
                     ps.update(e)
 
+    def _compute_ranks(self):
+        for k,order in ParticipantSatistic._ranked_metrics.iteritems():
+            d = { uid:p.metrics[k] for uid,p in self.participants.iteritems()}
+            rank = OrderedDict(sorted(d.iteritems(),key=lambda t:t[1],reverse=order))
+            for uid,p in self.participants.iteritems():
+                p.rankings[k] = rank.keys().index(uid)
+
     def _finalize(self):
+        # compute final metrics
         self.general.finalize()
         for ps in self.participants.itervalues():
             ps.finalize(self.general)
         # remove inactive users
-        self.participants = { uid:p for uid,p in self.participants.iteritems() if p.statistic["sum_events"] > 0  }
-
+        self.participants = { uid:p for uid,p in self.participants.iteritems() if p.metrics["sum_events"] > 0  }
+        # compute ranks
+        self._compute_ranks()
 
     def iter_participant(self):
-        for p in self.participants.itervalues():
-            yield p.statistic
+        return self.participants.itervalues()
 
     def run(self):
-        self._init_statistics_metrics()
+        self._init_statistics_item()
         self._scan_hangout()
         self._finalize()
-        print json.dumps(self.participants["100004041546029582490"].statistic)
-        print json.dumps(self.participants["111122836618407997682"].statistic)
+        print json.dumps(self.participants["100004041546029582490"].metrics)
+        print json.dumps(self.participants["100004041546029582490"].rankings)
+        print json.dumps(self.participants["111122836618407997682"].metrics)
+        print json.dumps(self.participants["111122836618407997682"].rankings)

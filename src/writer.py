@@ -19,8 +19,8 @@ class HangoutStatisticHtmlWriter:
         self.template = self.env.get_template(self._views("user/main"))
         for user in self.statistics.iter_participant():
         # user = self.statistics.participants["100004041546029582490"].statistic
-            with open(output_dir + "/" + user["uid"] + ".html",'wb') as outfile:
-                outfile.write(self.template.render(user=user).encode('utf8'))
+            with open(output_dir + "/" + user.metrics["uid"] + ".html",'wb') as outfile:
+                outfile.write(self.template.render(metrics=user.metrics,rankings=user.rankings).encode('utf8'))
 
     def _write_overview(self,output_dir):
         self.template = self.env.get_template(self._views("overview/main"))
@@ -39,7 +39,7 @@ class HangoutStatisticJsonWriter:
 
     def write(self,filename):
         with open(filename,'wb') as outfile:
-            result = map(None,self.statistics.iter_participant())
+            result = map(lambda x:x.metrics,self.statistics.iter_participant())
             json.dump(result,outfile,indent=4)
 
 

@@ -3,29 +3,29 @@
   <h2>Extract</h2>
   <ul id="extract" class="clearfix">
     <li>
-      <div class="year pull-left">{{ user.longest_words[0]|count }}</div>
+      <div class="year pull-left">{{ metrics.longest_words[0]|count }}</div>
       <div class="description pull-right">
         <h3>characters in longuest word</h3>
-        <p>{{ user.longest_words|join(' ') }}</p>
+        <p>{{ metrics.longest_words|join(' ') }}</p>
       </div>
     </li>
     <li>
-      <div class="year pull-left">{{ user.aliases|count }}</div>
+      <div class="year pull-left">{{ metrics.aliases|count }}</div>
       <div class="description pull-right">
         <h3>alias(es) founded</h3>
         <p>
-          {% for item in user.aliases %}
+          {% for item in metrics.aliases %}
           {{ item[0] + "<span> - " + item[1] + "</span> " }}
           {% endfor %}
         </p>
       </div>
     </li>
     <li>
-      <div class="year pull-left">{{ user.hashtags|count }}</div>
+      <div class="year pull-left">{{ metrics.hashtags|count }}</div>
       <div class="description pull-right">
         <h3>hashtag(s) used</h3>
         <p>
-          {{ user.hashtags|map(attribute='0')|join(' ') }}
+          {{ metrics.hashtags|map(attribute='0')|join(' ') }}
         </p>
       </div>
     </li>

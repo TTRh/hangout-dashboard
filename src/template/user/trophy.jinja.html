@@ -1,9 +1,22 @@
+{% macro trophy(condition,name,description) -%}
+  {% if condition %}
+    <div class="trophy" data-toggle="tooltip" data-placement="top" title="{{description}}">{{ name }}</div>
+  {% endif %}
+{%- endmacro %}
+
 <!-- TROPHY -->
 <div class="box">
   <h2>Trophy</h2>
-  <div class="trophy">Chatty</div>
-  <div class="trophy">Stalker</div>
-  <div class="trophy">Fool</div>
-  <div class="trophy">Gifyman</div>
+  {{ trophy(rankings.sum_coffee < 3,"Coffee Clock Man","Hello, i'm a caffeine junkie.") }}
+  {{ trophy(rankings.sum_uniq_words < 2,"Shakespeare", "I'm clever bitch ! I have a fucking huge vocabulary !") }}
+  {{ trophy(rankings.sum_reference < 3,"Famous", "Shoot me i'm famous ! Everybody talks about me ...") }}
+  {{ trophy(rankings.sum_characters < 4 or rankings.sum_words < 4 or rankings.sum_events < 4 ,"Main contributor", "What ?? Heuu ... ahem ... My compilations are sooo long ...") }}
+  {{ trophy(rankings.sum_chouquette < 3,"Hungry", "Subscribe to alert chouquette channel !") }}
+  {{ trophy(rankings.sum_url < 4,"Lazybones", "I'm a real bot crawler ! I already post your gif newbie !") }}
+  {{ trophy(rankings.avg_min_time_event < 2,"First !", "I know when you arrive the morning !") }}
+  {{ trophy(rankings.avg_max_time_event < 2,"Last !", "I know when you leave the evening !") }}
+  {{ trophy(metrics.perc_events < 0.01,"Stalker", "I record everythings, maybe i'm a NSA bot ?") }}
+  {{ trophy(rankings.sum_hashtags < 3,"#hashtags", "I always add some context, it helps to understand.") }}
+  {{ trophy(rankings.sum_laughs < 3,"Good audience", "If you tell me a joke - even bad - maybe i will joke ... because i'm polite") }}
 </div>
 
