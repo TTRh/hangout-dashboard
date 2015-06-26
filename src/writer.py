@@ -3,6 +3,12 @@ import csv
 from collections import namedtuple, OrderedDict
 from jinja2 import Environment, FileSystemLoader
 
+# function helpers
+
+def tojson(obj):
+  return json.dumps(obj)
+
+# writers
 
 class HangoutStatisticHtmlWriter:
 
@@ -11,6 +17,7 @@ class HangoutStatisticHtmlWriter:
     def __init__(self,statistics):
         self.statistics = statistics
         self.env = Environment(loader=FileSystemLoader(self._template_dir))
+        self.env.filters['tojson'] = tojson
 
     def _views(self,name):
         return name + ".jinja.html"

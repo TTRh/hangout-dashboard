@@ -266,7 +266,7 @@ class ParticipantSatistic:
         s["sum_days_with_event"] = len(self.acc_event_per_ymd)
         s["max_day_events"] = max(self.acc_event_per_ymd.itervalues())
         s["max_hour_events"] = max(self.acc_event_per_ymdh.itervalues())
-        s["sparkline_sum_events_vs_time"] = [ self.acc_event_per_hm[k] for k in iter_minutes('0000','2359',10) ]
+        s["sparkline_sum_events_vs_time"] = [ (k,self.acc_event_per_hm[k]) for k in iter_minutes('0000','2359',10) ]
         s["max_time_event"] = max(reduce(lambda x,y:x|y,self.acc_hms_per_ymd.itervalues()))
         s["min_time_event"] = min(reduce(lambda x,y:x|y,self.acc_hms_per_ymd.itervalues()))
         s["avg_max_time_event"] = median_low(sorted([max(l) for l in self.acc_hms_per_ymd.itervalues()]))
@@ -278,8 +278,8 @@ class ParticipantSatistic:
         # update global indicators
         s["perc_events"] = 1.0*s["sum_events"]/gs["sum_events"]
         # update sparkline with global scale
-        s["sparkline_sum_events_vs_month"] = [ self.acc_event_per_ym[str(k)] for k in iter_months(gs["min_ym"],gs["max_ym"]) ]
-        s["sparkline_sum_events_vs_day"] = [ self.acc_event_per_ymd[k] for k in iter_days(gs["min_ymd"],gs["max_ymd"]) ]
+        s["sparkline_sum_events_vs_month"] = [ (k,self.acc_event_per_ym[str(k)]) for k in iter_months(gs["min_ym"],gs["max_ym"]) ]
+        s["sparkline_sum_events_vs_day"] = [ (k,self.acc_event_per_ymd[k]) for k in iter_days(gs["min_ymd"],gs["max_ymd"]) ]
         # transform participant reference uid to full name
         s["aliases"] = [ (alias,gs["participants"][p_id]) for alias,p_id in s["aliases"] ]
 
