@@ -1,3 +1,20 @@
+/***************************************
+ * user picture profile
+ ***************************************/
+
+var user_id = window.location.pathname.split('/').pop().split('.').shift();
+function update_avatar() {
+  $.getJSON("/sandbox/hangout/public/js/user.json", function(data) {
+    $('#avatar').attr("src",data[user_id]["avatar"]);
+  });
+}
+
+update_avatar();
+
+/***************************************
+ * sparkline
+ ***************************************/
+
 // sparkline generator with xscale information
 function sparkline_xscale(selector,formater) {
   var sparkline = $(selector);
@@ -17,7 +34,7 @@ function sparkline_xscale(selector,formater) {
     minSpotColor: '#DA4336',
     maxSpotColor: '#10a461',
     highlightSpotColor: '#1a0dab',
-    tooltipFormat: '<span style="color: {{color}}">&#9679;</span> {{prefix}}{{y}} at {{x:label}}{{suffix}}</span>',
+    tooltipFormat: '<span style="color: {{color}}">&#9679;</span> {{prefix}}{{x:label}} : {{y}}{{suffix}}</span>',
     tooltipValueLookups: {
       label: $.range_map(xscale)
     }
@@ -42,10 +59,18 @@ sparkline_xscale('.sparkline.xscale-ym',function(k){
   }
 );
 
+/***************************************
+ * bootstrap initialization
+ ***************************************/
+
 // init boostrap tooltip
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
+
+/***************************************
+ * progress bar animation on load page
+ ***************************************/
 
 // animate progress bar on page load
 var callback = function(){
