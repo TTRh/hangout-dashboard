@@ -1,15 +1,14 @@
 /***************************************
- * user picture profile
+ * avatar
  ***************************************/
 
 var user_id = window.location.pathname.split('/').pop().split('.').shift();
+
 function update_avatar() {
   $.getJSON("/sandbox/hangout/public/js/user.json", function(data) {
     $('#avatar').attr("src",data[user_id]["avatar"]);
   });
 }
-
-update_avatar();
 
 /***************************************
  * sparkline
@@ -41,39 +40,41 @@ function sparkline_xscale(selector,formater) {
   });
 }
 
-// init sparklines HH:MM by 10 minutes step
-sparkline_xscale('.sparkline.xscale-hm',function(k){
-    return k.substr(0,2) + "h" + k.substr(2);
-  }
-);
-
-// init sparklines dd/mm/YYYY
-sparkline_xscale('.sparkline.xscale-ymd',function(k){
-    return k.substr(6) + "/" + k.substr(4,2) + "/" + k.substr(0,4);
-  }
-);
-
-// init sparklines mm/YYYY
-sparkline_xscale('.sparkline.xscale-ym',function(k){
-    return k.substr(4) + "/" + k.substr(0,4);
-  }
-);
+function update_sparkline() {
+  // init sparklines HH:MM by 10 minutes step
+  sparkline_xscale('.sparkline.xscale-hm',function(k){
+      return k.substr(0,2) + "h" + k.substr(2);
+    }
+  );
+  
+  // init sparklines dd/mm/YYYY
+  sparkline_xscale('.sparkline.xscale-ymd',function(k){
+      return k.substr(6) + "/" + k.substr(4,2) + "/" + k.substr(0,4);
+    }
+  );
+  
+  // init sparklines mm/YYYY
+  sparkline_xscale('.sparkline.xscale-ym',function(k){
+      return k.substr(4) + "/" + k.substr(0,4);
+    }
+  );
+}
 
 /***************************************
  * bootstrap initialization
  ***************************************/
 
 // init boostrap tooltip
-$(function () {
+function update_tooltip() {
   $('[data-toggle="tooltip"]').tooltip()
-})
+}
 
 /***************************************
  * progress bar animation on load page
  ***************************************/
 
 // animate progress bar on page load
-var callback = function(){
+function update_progress_bar() {
 	$('.item-skills').each(function(){
 		newWidth = $(this).parent().width() * $(this).data('percent');
 		$(this).width(0);
@@ -81,14 +82,34 @@ var callback = function(){
         width: newWidth,
     }, 1000);
 	});
+}
+
+/***************************************
+ * init function
+ ***************************************/
+
+var init_on_load = function () {
+  update_avatar();
+  update_tooltip();
+  update_sparkline();
+  update_progress_bar();
 };
-$(document).ready(callback);
+
+$(document).ready(init_on_load);
+
+/***************************************
+ * document resize
+ ***************************************/
+
+var reload_on_resize = function() {
+  update_progress_bar();
+};
 
 // animate progress bar on resize bar
 var resize;
 window.onresize = function() {
 	clearTimeout(resize);
 	resize = setTimeout(function(){
-		callback();
+		reload_on_resize();
 	}, 100);
 };
