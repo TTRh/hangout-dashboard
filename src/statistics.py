@@ -149,11 +149,15 @@ class ParticipantSatistic:
 
     def __init__(self,participant):
         self.participant = participant
-        s = dict.fromkeys(self._metrics)
-        # set user info
-        s["uid"] = participant.uid
-        s["name"] = participant.name
-        # init some metrics
+        self._init_metrics()
+        self._init_accumulators()
+        self._init_user_regex()
+
+    def _init_metrics(self):
+        self.metrics = dict.fromkeys(self._metrics)
+        s = self.metrics
+        s["uid"] = self.participant.uid
+        s["name"] = self.participant.name
         s["quotes"] = []
         s["aliases"] = []
         s["sum_reference"] = 0
@@ -161,8 +165,8 @@ class ParticipantSatistic:
         s["sum_laughs"] = 0
         s["sum_coffee"] = 0
         s["sum_chouquette"] = 0
-        self.metrics = s
-        # init accumulators
+
+    def _init_accumulators(self):
         self.acc_event_per_ym = Counter()
         self.acc_event_per_ymd = Counter()
         self.acc_event_per_ymdh = Counter()
@@ -172,8 +176,6 @@ class ParticipantSatistic:
         self.acc_hashtags = Counter()
         self.acc_words = Counter()
         self.acc_words_per_event = []
-        # init regex
-        self._init_user_regex()
 
     def _init_user_regex(self):
         name = self.participant.name.split(' ')
@@ -311,9 +313,15 @@ class GlobalStatistic:
     }
 
     def __init__(self):
-        self.metrics = dict.fromkeys(self._metrics)
+        self._init_metrics()
+        self._init_accumulators()
         self.rankings = {}
+
+    def _init_metrics(self):
+        self.metrics = dict.fromkeys(self._metrics)
         self.metrics["participants"] = {}
+
+    def _init_accumulators(self):
         self.acc_event_per_ym = Counter()
         self.acc_event_per_ymd = Counter()
         self.acc_words = Counter()
