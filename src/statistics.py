@@ -16,7 +16,7 @@ RE_URL = re.compile(r'https?://[^ ]*')
 RE_SITE = re.compile(r'https?://([^/ ]*)/?')
 RE_WORDS = re.compile(r'\w+')
 RE_HASHTAG = re.compile(r'#\w+')
-RE_LAUGH = re.compile(r'ahah|haha|mdr|excellent|lol|.norme|xD|:D|\^\^',re.IGNORECASE)
+RE_LAUGH = re.compile(r'g.nial|ahah|haha|mdr|excellent|lol|.norme|xD|:D|\^\^',re.IGNORECASE)
 RE_COFFEE = re.compile(r'caf.+',re.IGNORECASE)
 RE_CHOUQUETTE = re.compile(r'chouquette',re.IGNORECASE)
 
@@ -184,7 +184,7 @@ class ParticipantSatistic:
             alias_pattern += '|' + name[0] + '.*\w+.*' + name[-1]
         self.re_alias = re.compile(alias_pattern,re.IGNORECASE)
 
-    def _update_simple_metrics(self,e):
+    def _collect_simple_metrics(self,e):
         dt = e.get_datetime()
         self.acc_event_per_ym[get_ym(dt)] += 1
         self.acc_event_per_ymd[get_ymd(dt)] += 1
@@ -192,7 +192,7 @@ class ParticipantSatistic:
         self.acc_event_per_hm[get_hm(dt)] += 1
         self.acc_hms_per_ymd[get_ymd(dt)].add(get_hms(dt))
 
-    def _update_text_metrics(self,e):
+    def _collect_text_metrics(self,e):
         content = e.get_text()
         text = RE_URL.sub('',content)
         s = self.metrics
@@ -219,19 +219,19 @@ class ParticipantSatistic:
         s["sum_coffee"] += len(RE_COFFEE.findall(text))
         s["sum_chouquette"] += len(RE_CHOUQUETTE.findall(text))
 
-    def _update_global_metrics(self,e):
+    def _collect_global_metrics(self,e):
         s = self.metrics
         content = e.get_text()
-        # update aliases
+        # collect aliases
         alias = self.re_alias.search(content)
         if alias is not None:
             s["aliases"].append((alias.group(0),e.sender))
 
-    def update(self,event):
-        self._update_global_metrics(event)
+    def collect(self,event):
+        self._collect_global_metrics(event)
         if event.sender == self.participant.uid:
-            self._update_simple_metrics(event)
-            self._update_text_metrics(event)
+            self._collect_simple_metrics(event)
+            self._collect_text_metrics(event)
 
     def _finalize_simple_metrics(self):
         s = self.metrics
@@ -262,7 +262,7 @@ class ParticipantSatistic:
     def _finalize_global_metrics(self,g):
         s = self.metrics
         gm = g.metrics
-        # update global indicators
+        # collect global indicators
         s["perc_events"] = 1.0*s["sum_events"]/gm["sum_events"]
         # update reference
         s["sum_reference"] = g.acc_words[self.participant.name.split(' ')[0].lower()]
@@ -311,6 +311,7 @@ class GlobalStatistic:
         self._init_metrics()
         self._init_accumulators()
         self.rankings = {}
+        self.pending_link = None
 
     def _init_metrics(self):
         self.metrics = dict.fromkeys(self._metrics)
@@ -320,20 +321,41 @@ class GlobalStatistic:
         self.acc_event_per_ym = Counter()
         self.acc_event_per_ymd = Counter()
         self.acc_words = Counter()
+        self.acc_best_links = defaultdict(set)
 
     def add_participant(self,p):
         self.metrics["participants"][p.uid] = p.name
         self.rankings[p.uid] = dict.fromkeys(self._ranked_metrics.keys())
 
-    def update(self,event):
+    def _collect_text_metrics(self,event):
+        content = event.get_text()
+        text = RE_URL.sub('',content)
+        ## update words counter
+        for w in iter_words(text):
+            self.acc_words[w] += 1
+        ## udpate bast link accumulator
+        # check if someone laugh and there is a pending recent link
+        if RE_LAUGH.search(text) is not None and self.pending_link is not None:
+            # add link to user's best link list
+            self.acc_best_links[self.pending_link[0]].add(self.pending_link[1])
+        # update pending link with last link in event
+        urls = RE_URL.findall(content)
+        if len(urls) > 0:
+            # pending_link = [ user, url, remaining active time ]
+            self.pending_link = [event.sender,urls[-1],4]
+        # update persistance of pending url
+        if self.pending_link is not None:
+            if self.pending_link[2] > 0:
+                self.pending_link[2] -= 1
+            # flush pending url
+            else:
+                self.pending_link = None
+
+    def collect(self,event):
         dt = event.get_datetime()
         self.acc_event_per_ym[get_ym(dt)] += 1
         self.acc_event_per_ymd[get_ymd(dt)] += 1
-        # text metrics
-        content = event.get_text()
-        text = RE_URL.sub('',content)
-        for w in iter_words(text):
-            self.acc_words[w] += 1
+        self._collect_text_metrics(event)
 
     def finalize(self):
         s = self.metrics
@@ -376,9 +398,9 @@ class HangoutStatisticManager:
                 if e.sender not in self.participants:
                     continue
                 # update accumulators
-                self.globalstatistics.update(e)
+                self.globalstatistics.collect(e)
                 for ps in self.participants.itervalues():
-                    ps.update(e)
+                    ps.collect(e)
 
     def _finalize_metrics(self):
         # compute final metrics

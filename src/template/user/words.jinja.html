@@ -5,7 +5,7 @@
 <div class="box">
   <h2>Words</h2>
   <div id="language-skills">
-    {% for word,count in metrics.main_words %}
+    {% for word,count in umetrics.main_words %}
       <div class="word-count">{{word}} <div class="pull-right"><div class="number">x {{count}}</div></div></div>
     {% endfor %}
   </div>

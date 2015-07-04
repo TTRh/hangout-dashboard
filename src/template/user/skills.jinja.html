@@ -24,7 +24,7 @@
 <div class="box">
   <h2>Skills</h2>
   <div class="skills">
-    {% for site,count in metrics.main_site %}
+    {% for site,count in umetrics.main_site %}
     <div class="item-skills" data-percent="{{ skill_percent(count) }}" data-toggle="tooltip" data-placement="right" title="{{site}} x{{count}}">{{ site }}</div>
     {% endfor %}
     <div class="skills-legend clearfix">
