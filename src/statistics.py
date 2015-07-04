@@ -172,13 +172,18 @@ class ParticipantSatistic:
         self.acc_hashtags = Counter()
         self.acc_words = Counter()
         self.acc_words_per_event = []
-        # compile username dependent regex
+        # init regex
+        self._init_user_regex()
+
+    def _init_user_regex(self):
         name = self.participant.name.split(' ')
+        # reference regex
         self.re_reference = re.compile(name[0],re.IGNORECASE)
-        if len(name) == 2:
-            self.re_alias = re.compile(r'' + name[0] + '.*\w+.*' + name[1],re.IGNORECASE)
-        else:
-            self.re_alias = re.compile(r'' + name[0] + '\w+',re.IGNORECASE)
+        # alias regex
+        alias_pattern = name[0] + '\w+'
+        if len(name) >= 2:
+            alias_pattern += '|' + name[0] + '.*\w+.*' + name[-1]
+        self.re_alias = re.compile(alias_pattern,re.IGNORECASE)
 
     def _update_simple_metrics(self,e):
         dt = e.get_datetime()
