@@ -6,14 +6,16 @@ from datetime import datetime,date,timedelta
 from collections import *
 import json
 
-# regex helpers
+# global variable helper
+
 STOP = set(nltk.corpus.stopwords.words("french"))
+
+# regex helpers
 
 RE_URL = re.compile(r'https?://[^ ]*')
 RE_SITE = re.compile(r'https?://([^/ ]*)/?')
 RE_WORDS = re.compile(r'\w+')
 RE_HASHTAG = re.compile(r'#\w+')
-
 RE_LAUGH = re.compile(r'ahah|haha|mdr|excellent|lol|.norme|xD|:D|\^\^',re.IGNORECASE)
 RE_COFFEE = re.compile(r'caf.+',re.IGNORECASE)
 RE_CHOUQUETTE = re.compile(r'chouquette',re.IGNORECASE)
@@ -213,7 +215,7 @@ class ParticipantSatistic:
         s["sum_coffee"] += len(RE_COFFEE.findall(text))
         s["sum_chouquette"] += len(RE_CHOUQUETTE.findall(text))
 
-    def _update_general_metrics(self,e):
+    def _update_global_metrics(self,e):
         s = self.metrics
         content = e.get_text()
         # update aliases
@@ -226,7 +228,7 @@ class ParticipantSatistic:
             s["sum_reference"] += 1
 
     def update(self,event):
-        self._update_general_metrics(event)
+        self._update_global_metrics(event)
         if event.sender == self.participant.uid:
             self._update_simple_metrics(event)
             self._update_text_metrics(event)
@@ -257,7 +259,7 @@ class ParticipantSatistic:
         s["avg_max_time_event"] = median_low(sorted([max(l) for l in self.acc_hms_per_ymd.itervalues()]))
         s["avg_min_time_event"] = median_low(sorted([min(l) for l in self.acc_hms_per_ymd.itervalues()]))
 
-    def _finalize_general_metrics(self,g):
+    def _finalize_global_metrics(self,g):
         s = self.metrics
         gs = g.metrics
         # update global indicators
@@ -268,12 +270,12 @@ class ParticipantSatistic:
         # transform participant reference uid to full name
         s["aliases"] = [ (alias,gs["participants"][p_id]) for alias,p_id in s["aliases"] ]
 
-    def finalize(self,generalmetrics):
+    def finalize(self,globalmetrics):
         # TODO : deal with "spy" users
         if len(self.acc_event_per_ym) == 0:
             return
         self._finalize_simple_metrics()
-        self._finalize_general_metrics(generalmetrics)
+        self._finalize_global_metrics(globalmetrics)
 
 
 class GlobalStatistic:
@@ -346,15 +348,15 @@ class HangoutStatisticManager:
     def __init__(self,hangout):
         self.hangout = hangout
         self.conversation_ids = []
-        self.general = None
+        self.globalstatistics = None
         self.participants = {}
 
     def _init_statistics_item(self):
-        self.general = GlobalStatistic()
+        self.globalstatistics = GlobalStatistic()
         for uid in self.conversation_ids:
             c = self.hangout.get_conversation(uid)
             for p in c.iter_participant():
-                self.general.add_participant(p)
+                self.globalstatistics.add_participant(p)
                 if p.uid not in self.participants:
                     self.participants[p.uid] = ParticipantSatistic(p)
 
@@ -366,15 +368,15 @@ class HangoutStatisticManager:
                 if e.sender not in self.participants:
                     continue
                 # update accumulators
-                self.general.update(e)
+                self.globalstatistics.update(e)
                 for ps in self.participants.itervalues():
                     ps.update(e)
 
     def _finalize_metrics(self):
         # compute final metrics
-        self.general.finalize()
+        self.globalstatistics.finalize()
         for ps in self.participants.itervalues():
-            ps.finalize(self.general)
+            ps.finalize(self.globalstatistics)
         # remove inactive users
         self.participants = { uid:p for uid,p in self.participants.iteritems() if p.metrics["sum_events"] > 0  }
 
@@ -383,7 +385,7 @@ class HangoutStatisticManager:
         self._finalize_metrics()
 
     def _compute_rankings(self):
-        self.general.compute_ranks(self.participants)
+        self.globalstatistics.compute_ranks(self.participants)
 
     def iter_participant(self):
         return self.participants.iteritems()
@@ -393,5 +395,5 @@ class HangoutStatisticManager:
         self._compute_metrics()
         self._compute_rankings()
         print json.dumps(self.participants["100004041546029582490"].metrics)
-        print json.dumps(self.general.rankings["118243095948748495574"])
+        print json.dumps(self.globalstatistics.rankings["118243095948748495574"])
         # print json.dumps(self.participants["111122836618407997682"].metrics)

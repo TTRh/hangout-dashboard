@@ -25,7 +25,7 @@ class HangoutStatisticHtmlWriter:
     def _write_user(self,output_dir):
         self.template = self.env.get_template(self._views("user/main"))
         for uid,user in self.statistics.iter_participant():
-            user_rankings = self.statistics.general.rankings[uid]
+            user_rankings = self.statistics.globalstatistics.rankings[uid]
             with open(output_dir + "/" + uid + ".html",'wb') as outfile:
                 outfile.write(self.template.render(metrics=user.metrics,rankings=user_rankings).encode('utf8'))
 
