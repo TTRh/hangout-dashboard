@@ -160,7 +160,6 @@ class ParticipantSatistic:
         s["name"] = self.participant.name
         s["quotes"] = []
         s["aliases"] = []
-        s["sum_reference"] = 0
         s["sum_characters"] = 0
         s["sum_laughs"] = 0
         s["sum_coffee"] = 0
@@ -179,8 +178,6 @@ class ParticipantSatistic:
 
     def _init_user_regex(self):
         name = self.participant.name.split(' ')
-        # reference regex
-        self.re_reference = re.compile(name[0],re.IGNORECASE)
         # alias regex
         alias_pattern = name[0] + '\w+'
         if len(name) >= 2:
@@ -229,10 +226,6 @@ class ParticipantSatistic:
         alias = self.re_alias.search(content)
         if alias is not None:
             s["aliases"].append((alias.group(0),e.sender))
-        # update reference
-        reference = self.re_reference.search(content)
-        if reference is not None:
-            s["sum_reference"] += 1
 
     def update(self,event):
         self._update_global_metrics(event)
@@ -268,14 +261,16 @@ class ParticipantSatistic:
 
     def _finalize_global_metrics(self,g):
         s = self.metrics
-        gs = g.metrics
+        gm = g.metrics
         # update global indicators
-        s["perc_events"] = 1.0*s["sum_events"]/gs["sum_events"]
+        s["perc_events"] = 1.0*s["sum_events"]/gm["sum_events"]
+        # update reference
+        s["sum_reference"] = g.acc_words[self.participant.name.split(' ')[0].lower()]
         # update sparkline with global scale
-        s["sparkline_sum_events_vs_month"] = [ (k,self.acc_event_per_ym[str(k)]) for k in iter_months(gs["min_ym"],gs["max_ym"]) ]
-        s["sparkline_sum_events_vs_day"] = [ (k,self.acc_event_per_ymd[k]) for k in iter_days(gs["min_ymd"],gs["max_ymd"]) ]
+        s["sparkline_sum_events_vs_month"] = [ (k,self.acc_event_per_ym[str(k)]) for k in iter_months(gm["min_ym"],gm["max_ym"]) ]
+        s["sparkline_sum_events_vs_day"] = [ (k,self.acc_event_per_ymd[k]) for k in iter_days(gm["min_ymd"],gm["max_ymd"]) ]
         # transform participant reference uid to full name
-        s["aliases"] = [ (alias,gs["participants"][p_id]) for alias,p_id in s["aliases"] ]
+        s["aliases"] = [ (alias,gm["participants"][p_id]) for alias,p_id in s["aliases"] ]
 
     def finalize(self,globalmetrics):
         # TODO : deal with "spy" users

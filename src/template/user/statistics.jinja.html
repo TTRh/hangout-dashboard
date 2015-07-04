@@ -6,7 +6,7 @@
   {{ item(metrics.sum_uniq_words,"total unique words") }}
   {{ item(metrics.avg_min_time_event|slice(3)|map('join')|join(':')|truncate(5,True,''),"avg first time event") }}
   {{ item(metrics.avg_max_time_event|slice(3)|map('join')|join(':')|truncate(5,True,''),"avg last time event") }}
-  {{ item(metrics.sum_reference,"total number of name referenced") }}
+  {{ item(metrics.sum_reference,"total first name apparition") }}
   {{ item(metrics.sum_laughs,"total number laughs") }}
   {% if metrics.sum_coffee > 0 %}
     {{ item(metrics.sum_coffee,"total coffee call") }}
