@@ -1,16 +1,4 @@
 /***************************************
- * avatar
- ***************************************/
-
-var user_id = window.location.pathname.split('/').pop().split('.').shift();
-
-function update_avatar() {
-  $.getJSON("/sandbox/hangout/public/js/user.json", function(data) {
-    $('#avatar').attr("src",data[user_id]["avatar"]);
-  });
-}
-
-/***************************************
  * sparkline
  ***************************************/
 
@@ -89,7 +77,6 @@ function update_progress_bar() {
  ***************************************/
 
 var init_on_load = function () {
-  update_avatar();
   update_tooltip();
   update_sparkline();
   update_progress_bar();

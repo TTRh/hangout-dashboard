@@ -36,6 +36,7 @@ class HangoutStatisticHtmlWriter:
             global_metrics = {
                 "rankings" : self.statistics.globalstatistics.rankings[uid],
                 "bestlinks": self.statistics.globalstatistics.acc_best_links[uid],
+                "userinfo": self.users[uid]
             }
             with open(output_dir + "/" + uid + ".html",'wb') as outfile:
                 outfile.write(self.template.render(umetrics=user.metrics,gmetrics=global_metrics).encode('utf8'))
