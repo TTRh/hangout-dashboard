@@ -258,8 +258,8 @@ class ParticipantSatistic:
         s["sparkline_sum_events_vs_time"] = [ (k,self.acc_event_per_hm[k]) for k in iter_minutes('0000','2359',10) ]
         s["max_time_event"] = max(reduce(lambda x,y:x|y,self.acc_hms_per_ymd.itervalues()))
         s["min_time_event"] = min(reduce(lambda x,y:x|y,self.acc_hms_per_ymd.itervalues()))
-        s["avg_max_time_event"] = median_low(sorted([max(l) for l in self.acc_hms_per_ymd.itervalues()]))
-        s["avg_min_time_event"] = median_low(sorted([min(l) for l in self.acc_hms_per_ymd.itervalues()]))
+        s["avg_max_time_event"] = median_low(sorted((max(l) for l in self.acc_hms_per_ymd.itervalues())))
+        s["avg_min_time_event"] = median_low(sorted((min(l) for l in self.acc_hms_per_ymd.itervalues())))
 
     def _finalize_global_metrics(self,g):
         s = self.metrics
@@ -378,10 +378,9 @@ class GlobalStatistic:
 
     def compute_ranks(self,participants):
         for k,order in self._ranked_metrics.iteritems():
-            d = { uid:p.metrics[k] for uid,p in participants.iteritems()}
-            rank = OrderedDict(sorted(d.iteritems(),key=lambda t:t[1],reverse=order))
-            for uid,p in participants.iteritems():
-                self.rankings[uid][k] = rank.keys().index(uid)
+            rank = OrderedDict(sorted(( (uid,p.metrics[k]) for uid,p in participants.iteritems() ),key=lambda t:t[1],reverse=order))
+            for r,uid in enumerate(rank):
+                self.rankings[uid][k] = r
 
 class HangoutStatisticManager:
 
