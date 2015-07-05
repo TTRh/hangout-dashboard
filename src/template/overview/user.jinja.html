@@ -1,0 +1,14 @@
+{% macro thumbnail(uid,user) -%}
+  <div class="col-xs-6 col-md-2">
+    <a href="{{uid}}.html" target="_blank" class="thumbnail avatar">
+      <img src="{{ user.avatar }}" alt="avatar">
+    </a>
+  </div>
+{%- endmacro %}
+
+<div class="box">
+  <h2>Artists</h2>
+  {% for uid,user in users.iteritems() %}
+    {{ thumbnail(uid,user) }}
+  {% endfor %}
+</div>

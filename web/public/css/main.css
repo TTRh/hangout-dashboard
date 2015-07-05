@@ -35,7 +35,7 @@ PHOTO (AVATAR)
 #photo-header{
   margin-top: -75px;
 }
-#photo{
+.avatar{
   width: 160px;
   height: 160px;
   border-radius: 50%;
@@ -44,7 +44,7 @@ PHOTO (AVATAR)
   /* background: #ededed; */
   display: inline-block;
 }
-#photo img{
+.avatar img{
   width: 150px;
   height: 150px;
   border-radius: 50%;

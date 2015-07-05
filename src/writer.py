@@ -14,10 +14,18 @@ class HangoutStatisticHtmlWriter:
 
     _template_dir = "template"
 
-    def __init__(self,statistics):
+    def __init__(self,statistics,user_info_file=None):
         self.statistics = statistics
+        self._load_user_info(user_info_file)
         self.env = Environment(loader=FileSystemLoader(self._template_dir))
         self.env.filters['tojson'] = tojson
+
+    def _load_user_info(self,path_file):
+        if path_file is not None:
+            with open(path_file) as json_file:
+                self.users = json.load(json_file)
+        else:
+            self.users = None
 
     def _views(self,name):
         return name + ".jinja.html"
@@ -35,12 +43,11 @@ class HangoutStatisticHtmlWriter:
     def _write_overview(self,output_dir):
         self.template = self.env.get_template(self._views("overview/main"))
         with open(output_dir + "/index.html",'wb') as outfile:
-            outfile.write(self.template.render(overview=None))
+            outfile.write(self.template.render(users=self.users).encode('utf8'))
 
     def write(self,output_dir):
         self._write_user(output_dir)
-        # self._write_overview(output_dir)
-
+        self._write_overview(output_dir)
 
 class HangoutStatisticJsonWriter:
 

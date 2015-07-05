@@ -33,7 +33,7 @@ def main(argv):
     hsw.write('HangoutsStatistic.json')
 
     # 5 - dump dashboard
-    hsd = HangoutStatisticHtmlWriter(hs)
+    hsd = HangoutStatisticHtmlWriter(hs,"../data/user.json")
     hsd.write('../web')
 
 if __name__ == '__main__':
