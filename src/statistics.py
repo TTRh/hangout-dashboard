@@ -4,6 +4,7 @@ import itertools
 import re
 from datetime import datetime,date,timedelta
 from collections import *
+from math import log
 import json
 
 # global variable helper
@@ -123,6 +124,7 @@ class ParticipantSatistic:
         "avg_characters_event", # avg number of characters by events
         "sum_uniq_words", # total number of unique words (vocabulary) - set words
         "main_words", # main words - words counter
+        "favorite_words", # favorite words used - words counter using tfidf
         "main_site", # main site redirection - incremental site parser and site counter
         "hashtags", # main hashtag - incremental hashtag parser and hashtag counter
         "sum_hashtags", # main hashtag - incremental hashtag parser and hashtag counter
@@ -271,6 +273,14 @@ class ParticipantSatistic:
         s["sparkline_sum_events_vs_day"] = [ (k,self.acc_event_per_ymd[k]) for k in iter_days(gm["min_ymd"],gm["max_ymd"]) ]
         # transform participant reference uid to full name
         s["aliases"] = [ (alias,gm["participants"][p_id]) for alias,p_id in s["aliases"] ]
+        # tfidf computation
+        self._compute_favorite_words(g)
+
+    def _compute_favorite_words(self,g):
+        total_user_words = len(self.acc_words)
+        total_words = len(g.acc_words)
+        tfidf = OrderedDict(sorted( ((w,1.0*n/total_user_words * log(total_words/g.acc_words[w])) for w,n in self.acc_words.iteritems()), key=lambda x:x[1], reverse=True))
+        self.metrics["favorite_words"] = tfidf.items()[:20]
 
     def finalize(self,globalmetrics):
         # TODO : deal with "spy" users
