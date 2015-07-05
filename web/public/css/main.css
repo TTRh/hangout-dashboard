@@ -19,7 +19,8 @@ body{
   font-weight: 400;
   font-size: 1em;
   color: #363636;
-  background: #ededed;
+  /* background: #ededed; */
+  background: #fff;
 }
 /*******************************************
 CONTAINER
@@ -349,4 +350,22 @@ BUGFIX
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
+}
+
+.ih-item.circle {
+  width: auto;
+  height: auto;
+}
+
+.ih-item.circle .img {
+  width: auto;
+  height: auto;
+}
+
+.ih-item.circle .img:before {
+  box-shadow: none;
+}
+
+.ih-item.circle.effect17 .info h3 {
+  height: 100px;
 }
