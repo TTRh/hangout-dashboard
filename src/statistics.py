@@ -279,8 +279,8 @@ class ParticipantSatistic:
     def _compute_favorite_words(self,g):
         total_user_words = len(self.acc_words)
         total_words = len(g.acc_words)
-        tfidf = OrderedDict(sorted( ((w,1.0*n/total_user_words * log(total_words/g.acc_words[w])) for w,n in self.acc_words.iteritems()), key=lambda x:x[1], reverse=True))
-        self.metrics["favorite_words"] = tfidf.items()[:20]
+        tfidf = OrderedDict(sorted( ((w,(1.0*n/total_user_words)*(1.0*total_words/g.acc_words[w])) for w,n in self.acc_words.iteritems()), key=lambda x:x[1], reverse=True))
+        self.metrics["favorite_words"] = tfidf.items()[:30]
 
     def finalize(self,globalmetrics):
         # TODO : deal with "spy" users
