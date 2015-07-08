@@ -1,112 +1,19 @@
-import nltk
-nltk.data.path.append('/home/pierre/app/nltk_data')
+# standard package
+
 import itertools
-import re
-from datetime import datetime,date,timedelta
 from collections import *
 from math import log
 import json
 
-# global variable helper
+# local package
 
-STOP = set(nltk.corpus.stopwords.words("french"))
-
-# regex helpers
-
-RE_URL = re.compile(r'https?://[^ ]*')
-RE_SITE = re.compile(r'https?://([^/ ]*)/?')
-RE_WORDS = re.compile(r'\w+',re.UNICODE)
-RE_HASHTAG = re.compile(r'#\w+')
-RE_LAUGH = re.compile(r'g.nial|ahah|haha|mdr|excellent|lol|.norme|xD|:D|\^\^',re.IGNORECASE)
-RE_COFFEE = re.compile(r'caf.+',re.IGNORECASE)
-RE_CHOUQUETTE = re.compile(r'chouquette',re.IGNORECASE)
-
-# lambda helpers
-
-get_ym = lambda dt: dt[:6]
-get_ymd = lambda dt: dt[:8]
-get_ymdh = lambda dt: dt[:-4]
-get_hms = lambda dt: dt[-6:]
-get_hm = lambda dt: dt[-6:-3] + '0' # by 10 minutes step
-
-# function helpers
-
-def pretty_time(stime):
-    return stime[:2] + ":" + stime[2:4]
-
-def extract_site(url):
-    # extract full domain name
-    dn = RE_SITE.search(url)
-    if not dn:
-        return None
-    reverse_dn = dn.group(1).split('.')[::-1]
-    result, ok = "", False
-    # append from end to begin each sub domain name if current db < 4 characters and we don't add already 5 characters sub dn
-    for p in reverse_dn:
-        if len(p) <= 4 and ok:
-            break
-        if len(p) >= 5:
-             ok = True
-        result = p + '.' + result
-    return result[:-1]
-
-def mean(iterable):
-    n,total = 0,0
-    for v in iterable:
-        n+=1
-        total += v
-    if n == 0:
-        return None
-    else:
-        return float(total)/n
-
-def median_low(lst):
-    n = len(lst)
-    if n == 0:
-        return None
-    elif n % 2 == 0:
-        return lst[n/2-1]
-    else:
-        return lst[n/2]
-
-def iter_months(ym1,ym2):
-    y1,m1 = int(ym1[:-2]),int(ym1[-2:])
-    y2,m2 = int(ym2[:-2]),int(ym2[-2:])
-    if ym1 > ym2:
-        raise StopIteration
-    else:
-        for y in xrange(y1,y2+1):
-            for m in xrange(1 if y != y1 else m1, 13 if y != y2 else m2+1):
-                yield str(y*100 + m)
-
-def iter_days(d1,d2,step=1):
-    start,end = datetime.strptime(d1,'%Y%m%d'),datetime.strptime(d2,'%Y%m%d')
-    delta = timedelta(days=step)
-    while start<=end:
-        yield start.strftime("%Y%m%d")
-        start += delta
-
-def iter_minutes(hm1,hm2,step=1):
-    h1,m1 = int(hm1[:-2]),int(hm1[-2:])
-    h2,m2 = int(hm2[:-2]),int(hm2[-2:])
-    if hm1 > hm2:
-        raise StopIteration
-    else:
-        for h in xrange(h1,h2+1):
-            for m in xrange(0 if h != h1 else m1, 60 if h != h2 else m2+1,step):
-                stime = str(h*100+m)
-                yield '0'*(4-len(stime)) + stime
-
-def iter_words(text):
-    tokens = RE_WORDS.findall(text.lower())
-    for w in tokens:
-        if len(w) > 3 and w not in STOP:
-            yield w
+from helper import *
 
 # statistics objects
 
 class ParticipantSatistic:
 
+    # here is all metrics computed
     _metrics = [
         "uid", # user id - initialization
         "name", # username - initialization
@@ -154,6 +61,19 @@ class ParticipantSatistic:
         self._init_metrics()
         self._init_accumulators()
         self._init_user_regex()
+
+    def collect_metrics(self,event):
+        self._collect_global_metrics(event)
+        if event.sender == self.participant.uid:
+            self._collect_simple_metrics(event)
+            self._collect_text_metrics(event)
+
+    def compute_metrics(self,globalmetrics):
+        # TODO : deal with "spy" users
+        if len(self.acc_event_per_ym) == 0:
+            return
+        self._compute_simple_metrics()
+        self._compute_global_metrics(globalmetrics)
 
     def _init_metrics(self):
         self.metrics = dict.fromkeys(self._metrics)
@@ -228,13 +148,7 @@ class ParticipantSatistic:
         if alias:
             s["aliases"].append((alias.group(0),e.sender))
 
-    def collect(self,event):
-        self._collect_global_metrics(event)
-        if event.sender == self.participant.uid:
-            self._collect_simple_metrics(event)
-            self._collect_text_metrics(event)
-
-    def _finalize_simple_metrics(self):
+    def _compute_simple_metrics(self):
         s = self.metrics
         s["sum_events"] = sum(self.acc_event_per_ym.itervalues())
         s["sum_url"] = sum(self.acc_dns.itervalues())
@@ -260,7 +174,7 @@ class ParticipantSatistic:
         s["avg_max_time_event"] = median_low(sorted((max(l) for l in self.acc_hms_per_ymd.itervalues())))
         s["avg_min_time_event"] = median_low(sorted((min(l) for l in self.acc_hms_per_ymd.itervalues())))
 
-    def _finalize_global_metrics(self,g):
+    def _compute_global_metrics(self,g):
         s = self.metrics
         gm = g.metrics
         # collect global indicators
@@ -273,24 +187,16 @@ class ParticipantSatistic:
         # transform participant reference uid to full name
         s["aliases"] = [ (alias,gm["participants"][p_id]) for alias,p_id in s["aliases"] ]
         # tfidf computation
-        self._compute_favorite_words(g)
+        self._compute_favorite_words_metrics(g)
 
-    def _compute_favorite_words(self,g):
+    def _compute_favorite_words_metrics(self,g):
         total_users = len(g.acc_corpus)
         total_user_words = len(self.acc_words)
         max_ftd = 1.0*self.acc_words.most_common(1)[0][1]/total_user_words
         ftd = lambda n: 0.5 + (0.5*n/total_user_words)/max_ftd
         idf = lambda w: log(1.0*total_users/reduce(lambda x,y: x + (1 if w in y else 0),g.acc_corpus.itervalues(),0))
         tfidf = OrderedDict(sorted(((w,ftd(n)*idf(w)) for w,n in self.acc_words.iteritems()), key=lambda x:x[1], reverse=True))
-        # tfidf = OrderedDict(sorted(((w,(0.5+(0.5*n/total_user_words)/max_ftd)*log(1.0*total_users/reduce(lambda x,y: x + (1 if w in y else 0),g.acc_corpus.itervalues(),0))) for w,n in self.acc_words.iteritems()), key=lambda x:x[1], reverse=True))
         self.metrics["favorite_words"] = tfidf.items()[:30]
-
-    def finalize(self,globalmetrics):
-        # TODO : deal with "spy" users
-        if len(self.acc_event_per_ym) == 0:
-            return
-        self._finalize_simple_metrics()
-        self._finalize_global_metrics(globalmetrics)
 
 
 class GlobalStatistic:
@@ -305,6 +211,7 @@ class GlobalStatistic:
         "main_words"
     ]
 
+    # here is all ranked metrics computed
     _ranked_metrics = {
         "sum_reference": True,
         "sum_events": True,
@@ -326,6 +233,29 @@ class GlobalStatistic:
         self.rankings = {}
         self.pending_link = None
 
+    def add_participant(self,p):
+        self.metrics["participants"][p.uid] = p.name
+        self.rankings[p.uid] = dict.fromkeys(self._ranked_metrics.keys())
+
+    def collect_metrics(self,event):
+        self._collect_simple_metrics(event)
+        self._collect_text_metrics(event)
+
+    def compute_metrics(self):
+        s = self.metrics
+        s["max_ym"] = max(self.acc_event_per_ym.iterkeys())
+        s["min_ym"] = min(self.acc_event_per_ym.iterkeys())
+        s["max_ymd"] = max(self.acc_event_per_ymd.iterkeys())
+        s["min_ymd"] = min(self.acc_event_per_ymd.iterkeys())
+        s["sum_events"] = sum(self.acc_event_per_ym.itervalues())
+        s["main_words"] = self.acc_words.most_common(20)
+
+    def compute_ranks(self,participants):
+        for k,order in self._ranked_metrics.iteritems():
+            rank = OrderedDict(sorted(( (uid,p.metrics[k]) for uid,p in participants.iteritems() ),key=lambda t:t[1],reverse=order))
+            for r,uid in enumerate(rank):
+                self.rankings[uid][k] = r
+
     def _init_metrics(self):
         self.metrics = dict.fromkeys(self._metrics)
         self.metrics["participants"] = {}
@@ -337,18 +267,14 @@ class GlobalStatistic:
         self.acc_best_links = defaultdict(set)
         self.acc_corpus = defaultdict(set)
 
-    def add_participant(self,p):
-        self.metrics["participants"][p.uid] = p.name
-        self.rankings[p.uid] = dict.fromkeys(self._ranked_metrics.keys())
-
     def _collect_text_metrics(self,event):
         content = event.get_text()
         text = RE_URL.sub('',content)
-        ## update words counter
+        # update words counter
         for w in iter_words(text):
             self.acc_words[w] += 1
             self.acc_corpus[event.sender].add(w)
-        ## udpate best link accumulator
+        # udpate best link accumulator :
         # check if someone laugh and there is a pending recent link
         if RE_LAUGH.search(text) and self.pending_link:
             # add link to user's best link list
@@ -366,26 +292,11 @@ class GlobalStatistic:
             else:
                 self.pending_link = None
 
-    def collect(self,event):
+    def _collect_simple_metrics(self,event):
         dt = event.get_datetime()
         self.acc_event_per_ym[get_ym(dt)] += 1
         self.acc_event_per_ymd[get_ymd(dt)] += 1
-        self._collect_text_metrics(event)
 
-    def finalize(self):
-        s = self.metrics
-        s["max_ym"] = max(self.acc_event_per_ym.iterkeys())
-        s["min_ym"] = min(self.acc_event_per_ym.iterkeys())
-        s["max_ymd"] = max(self.acc_event_per_ymd.iterkeys())
-        s["min_ymd"] = min(self.acc_event_per_ymd.iterkeys())
-        s["sum_events"] = sum(self.acc_event_per_ym.itervalues())
-        s["main_words"] = self.acc_words.most_common(20)
-
-    def compute_ranks(self,participants):
-        for k,order in self._ranked_metrics.iteritems():
-            rank = OrderedDict(sorted(( (uid,p.metrics[k]) for uid,p in participants.iteritems() ),key=lambda t:t[1],reverse=order))
-            for r,uid in enumerate(rank):
-                self.rankings[uid][k] = r
 
 class HangoutStatisticManager:
 
@@ -394,6 +305,16 @@ class HangoutStatisticManager:
         self.conversation_ids = []
         self.globalstatistics = None
         self.participants = {}
+
+    def run(self):
+        self._init_statistics_item()
+        self._update_metrics()
+        self._update_rankings()
+        print json.dumps(self.participants["100004041546029582490"].metrics)
+        print json.dumps(self.globalstatistics.rankings["118243095948748495574"])
+
+    def iter_participant(self):
+        return self.participants.iteritems()
 
     def _init_statistics_item(self):
         self.globalstatistics = GlobalStatistic()
@@ -412,31 +333,21 @@ class HangoutStatisticManager:
                 if e.sender not in self.participants:
                     continue
                 # update accumulators
-                self.globalstatistics.collect(e)
+                self.globalstatistics.collect_metrics(e)
                 for ps in self.participants.itervalues():
-                    ps.collect(e)
+                    ps.collect_metrics(e)
 
-    def _finalize_metrics(self):
+    def _compute_metrics(self):
         # compute final metrics
-        self.globalstatistics.finalize()
+        self.globalstatistics.compute_metrics()
         for ps in self.participants.itervalues():
-            ps.finalize(self.globalstatistics)
+            ps.compute_metrics(self.globalstatistics)
         # remove inactive users
         self.participants = { uid:p for uid,p in self.participants.iteritems() if p.metrics["sum_events"] > 0  }
 
-    def _compute_metrics(self):
+    def _update_metrics(self):
         self._collect_metrics()
-        self._finalize_metrics()
-
-    def _compute_rankings(self):
-        self.globalstatistics.compute_ranks(self.participants)
-
-    def iter_participant(self):
-        return self.participants.iteritems()
-
-    def run(self):
-        self._init_statistics_item()
         self._compute_metrics()
-        self._compute_rankings()
-        print json.dumps(self.participants["100004041546029582490"].metrics)
-        print json.dumps(self.globalstatistics.rankings["118243095948748495574"])
+
+    def _update_rankings(self):
+        self.globalstatistics.compute_ranks(self.participants)
