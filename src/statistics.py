@@ -37,7 +37,7 @@ def pretty_time(stime):
 def extract_site(url):
     # extract full domain name
     dn = RE_SITE.search(url)
-    if dn is None:
+    if not dn:
         return None
     reverse_dn = dn.group(1).split('.')[::-1]
     result, ok = "", False
@@ -201,7 +201,6 @@ class ParticipantSatistic:
         # number of characters
         s["sum_characters"] += len(content)
         # extract words
-        # TODO: use iter words function
         words = RE_WORDS.findall(text.lower())
         if len(words) > 0:
             self.acc_words_per_event.append(len(words))
@@ -211,7 +210,7 @@ class ParticipantSatistic:
         # extract url
         for url in RE_URL.findall(content):
             site = extract_site(url)
-            if site is not None:
+            if site:
                 self.acc_dns[site] += 1
         # extract hashtag
         for hashtag in RE_HASHTAG.findall(text):
@@ -226,7 +225,7 @@ class ParticipantSatistic:
         content = e.get_text()
         # collect aliases
         alias = self.re_alias.search(content)
-        if alias is not None:
+        if alias:
             s["aliases"].append((alias.group(0),e.sender))
 
     def collect(self,event):
@@ -351,7 +350,7 @@ class GlobalStatistic:
             self.acc_corpus[event.sender].add(w)
         ## udpate best link accumulator
         # check if someone laugh and there is a pending recent link
-        if RE_LAUGH.search(text) is not None and self.pending_link is not None:
+        if RE_LAUGH.search(text) and self.pending_link:
             # add link to user's best link list
             self.acc_best_links[self.pending_link[0]].add(self.pending_link[1])
         # update pending link with last link in event
@@ -360,7 +359,7 @@ class GlobalStatistic:
             # pending_link = [ user, url, remaining active time ]
             self.pending_link = [event.sender,urls[-1],4]
         # update persistance of pending url
-        if self.pending_link is not None:
+        if self.pending_link:
             if self.pending_link[2] > 0:
                 self.pending_link[2] -= 1
             # flush pending url
