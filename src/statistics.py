@@ -15,7 +15,7 @@ STOP = set(nltk.corpus.stopwords.words("french"))
 
 RE_URL = re.compile(r'https?://[^ ]*')
 RE_SITE = re.compile(r'https?://([^/ ]*)/?')
-RE_WORDS = re.compile(r'\w+')
+RE_WORDS = re.compile(r'\w+',re.UNICODE)
 RE_HASHTAG = re.compile(r'#\w+')
 RE_LAUGH = re.compile(r'g.nial|ahah|haha|mdr|excellent|lol|.norme|xD|:D|\^\^',re.IGNORECASE)
 RE_COFFEE = re.compile(r'caf.+',re.IGNORECASE)
@@ -124,7 +124,7 @@ class ParticipantSatistic:
         "avg_characters_event", # avg number of characters by events
         "sum_uniq_words", # total number of unique words (vocabulary) - set words
         "main_words", # main words - words counter
-        "favorite_words", # favorite words used - words counter using tfidf
+        "favorite_words", # favorite/specifc words - tfidf score
         "main_site", # main site redirection - incremental site parser and site counter
         "hashtags", # main hashtag - incremental hashtag parser and hashtag counter
         "sum_hashtags", # main hashtag - incremental hashtag parser and hashtag counter
@@ -253,8 +253,8 @@ class ParticipantSatistic:
         s["avg_day_events"] = mean(self.acc_event_per_ymd.itervalues())
         s["avg_day_links"] = None
         s["sum_days_with_event"] = len(self.acc_event_per_ymd)
-        s["max_day_events"] = max(self.acc_event_per_ymd.itervalues())
-        s["max_hour_events"] = max(self.acc_event_per_ymdh.itervalues())
+        s["max_day_events"] = self.acc_event_per_ymd.most_common(1)[0][1]
+        s["max_hour_events"] = self.acc_event_per_ymdh.most_common(1)[0][1]
         s["sparkline_sum_events_vs_time"] = [ (k,self.acc_event_per_hm[k]) for k in iter_minutes('0000','2359',10) ]
         s["max_time_event"] = max(reduce(lambda x,y:x|y,self.acc_hms_per_ymd.itervalues()))
         s["min_time_event"] = min(reduce(lambda x,y:x|y,self.acc_hms_per_ymd.itervalues()))
@@ -277,9 +277,13 @@ class ParticipantSatistic:
         self._compute_favorite_words(g)
 
     def _compute_favorite_words(self,g):
+        total_users = len(g.acc_corpus)
         total_user_words = len(self.acc_words)
-        total_words = len(g.acc_words)
-        tfidf = OrderedDict(sorted( ((w,(1.0*n/total_user_words)*(1.0*total_words/g.acc_words[w])) for w,n in self.acc_words.iteritems()), key=lambda x:x[1], reverse=True))
+        max_ftd = 1.0*self.acc_words.most_common(1)[0][1]/total_user_words
+        ftd = lambda n: 0.5 + (0.5*n/total_user_words)/max_ftd
+        idf = lambda w: log(1.0*total_users/reduce(lambda x,y: x + (1 if w in y else 0),g.acc_corpus.itervalues(),0))
+        tfidf = OrderedDict(sorted(((w,ftd(n)*idf(w)) for w,n in self.acc_words.iteritems()), key=lambda x:x[1], reverse=True))
+        # tfidf = OrderedDict(sorted(((w,(0.5+(0.5*n/total_user_words)/max_ftd)*log(1.0*total_users/reduce(lambda x,y: x + (1 if w in y else 0),g.acc_corpus.itervalues(),0))) for w,n in self.acc_words.iteritems()), key=lambda x:x[1], reverse=True))
         self.metrics["favorite_words"] = tfidf.items()[:30]
 
     def finalize(self,globalmetrics):
@@ -332,6 +336,7 @@ class GlobalStatistic:
         self.acc_event_per_ymd = Counter()
         self.acc_words = Counter()
         self.acc_best_links = defaultdict(set)
+        self.acc_corpus = defaultdict(set)
 
     def add_participant(self,p):
         self.metrics["participants"][p.uid] = p.name
@@ -343,7 +348,8 @@ class GlobalStatistic:
         ## update words counter
         for w in iter_words(text):
             self.acc_words[w] += 1
-        ## udpate bast link accumulator
+            self.acc_corpus[event.sender].add(w)
+        ## udpate best link accumulator
         # check if someone laugh and there is a pending recent link
         if RE_LAUGH.search(text) is not None and self.pending_link is not None:
             # add link to user's best link list
@@ -435,4 +441,3 @@ class HangoutStatisticManager:
         self._compute_rankings()
         print json.dumps(self.participants["100004041546029582490"].metrics)
         print json.dumps(self.globalstatistics.rankings["118243095948748495574"])
-        # print json.dumps(self.participants["111122836618407997682"].metrics)

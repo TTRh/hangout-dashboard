@@ -3,10 +3,10 @@
 
 <!-- WORDS -->
 <div class="box">
-  <h2>Words</h2>
+  <h2>Specific words</h2>
   <div id="language-skills">
-    {% for word,count in umetrics.main_words %}
-      <div class="word-count">{{word}} <div class="pull-right"><div class="number">x {{count}}</div></div></div>
+    {% for word,count in umetrics.favorite_words %}
+      <div class="word-count">{{word}} <div class="pull-right"><div class="number">{{count|round(3)}}</div></div></div>
     {% endfor %}
   </div>
 </div>
