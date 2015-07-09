@@ -1,5 +1,6 @@
 import json
 import csv
+from math import log
 from collections import namedtuple, OrderedDict
 from jinja2 import Environment, FileSystemLoader
 
@@ -7,6 +8,9 @@ from jinja2 import Environment, FileSystemLoader
 
 def tojson(obj):
   return json.dumps(obj)
+
+def smoothlognorm(n,nmax):
+  return log(1+n)/log(nmax)
 
 # writers
 
@@ -19,6 +23,7 @@ class HangoutStatisticHtmlWriter:
         self._load_user_info(user_info_file)
         self.env = Environment(loader=FileSystemLoader(self._template_dir))
         self.env.filters['tojson'] = tojson
+        self.env.filters['smoothlognorm'] = smoothlognorm
 
     def _load_user_info(self,path_file):
         if path_file is not None:
@@ -34,6 +39,7 @@ class HangoutStatisticHtmlWriter:
         self.template = self.env.get_template(self._views("user/main"))
         for uid,user in self.statistics.iter_participant():
             global_metrics = {
+                "metrics" : self.statistics.globalstatistics.metrics,
                 "rankings" : self.statistics.globalstatistics.rankings[uid],
                 "bestlinks": self.statistics.globalstatistics.acc_best_links[uid],
                 "userinfo": self.users[uid]

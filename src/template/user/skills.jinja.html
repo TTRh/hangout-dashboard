@@ -1,31 +1,9 @@
-{% macro skill_percent(value) -%}
-  {% if value > 200 %}
-    1.0
-  {% elif value > 100 %}
-    0.8
-  {% elif value > 80 %}
-    0.77
-  {% elif value > 50 %}
-    0.68
-  {% elif value > 10 %}
-    0.5
-  {% elif value > 7 %}
-    0.4
-  {% elif value > 5 %}
-    0.33
-  {% elif value > 2 %}
-    0.25
-  {% else %}
-    0.17
-  {% endif %}
-{%- endmacro %}
-
 <!-- SKILLS -->
 <div class="box">
   <h2>Skills</h2>
   <div class="skills">
     {% for site,count in umetrics.main_site %}
-    <div class="item-skills" data-percent="{{ skill_percent(count) }}" data-toggle="tooltip" data-placement="right" title="{{site}} x{{count}}">{{ site }}</div>
+    <div class="item-skills" data-percent="{{ count|smoothlognorm(gmetrics.metrics.max_user_dns) }}" data-toggle="tooltip" data-placement="right" title="{{site}} x{{count}}">{{ site }}</div>
     {% endfor %}
     <div class="skills-legend clearfix">
       <div class="legend-left legend">Newbe</div>

@@ -68,12 +68,12 @@ class ParticipantSatistic:
             self._collect_simple_metrics(event)
             self._collect_text_metrics(event)
 
-    def compute_metrics(self,globalmetrics):
+    def update_metrics(self,globalmetrics):
         # TODO : deal with "spy" users
         if len(self.acc_event_per_ym) == 0:
             return
-        self._compute_simple_metrics()
-        self._compute_global_metrics(globalmetrics)
+        self._update_simple_metrics()
+        self._update_global_metrics(globalmetrics)
 
     def _init_metrics(self):
         self.metrics = dict.fromkeys(self._metrics)
@@ -148,7 +148,7 @@ class ParticipantSatistic:
         if alias:
             s["aliases"].append((alias.group(0),e.sender))
 
-    def _compute_simple_metrics(self):
+    def _update_simple_metrics(self):
         s = self.metrics
         s["sum_events"] = sum(self.acc_event_per_ym.itervalues())
         s["sum_url"] = sum(self.acc_dns.itervalues())
@@ -174,7 +174,7 @@ class ParticipantSatistic:
         s["avg_max_time_event"] = median_low(sorted((max(l) for l in self.acc_hms_per_ymd.itervalues())))
         s["avg_min_time_event"] = median_low(sorted((min(l) for l in self.acc_hms_per_ymd.itervalues())))
 
-    def _compute_global_metrics(self,g):
+    def _update_global_metrics(self,g):
         s = self.metrics
         gm = g.metrics
         # collect global indicators
@@ -187,9 +187,9 @@ class ParticipantSatistic:
         # transform participant reference uid to full name
         s["aliases"] = [ (alias,gm["participants"][p_id]) for alias,p_id in s["aliases"] ]
         # tfidf computation
-        self._compute_favorite_words_metrics(g)
+        self._update_favorite_words_metrics(g)
 
-    def _compute_favorite_words_metrics(self,g):
+    def _update_favorite_words_metrics(self,g):
         total_users = len(g.acc_corpus)
         total_user_words = len(self.acc_words)
         max_ftd = 1.0*self.acc_words.most_common(1)[0][1]/total_user_words
@@ -208,7 +208,8 @@ class GlobalStatistic:
         "min_ymd",
         "sum_events",
         "participants",
-        "main_words"
+        "main_words",
+        "max_user_dns"
     ]
 
     # here is all ranked metrics computed
@@ -241,7 +242,7 @@ class GlobalStatistic:
         self._collect_simple_metrics(event)
         self._collect_text_metrics(event)
 
-    def compute_metrics(self):
+    def update_metrics(self):
         s = self.metrics
         s["max_ym"] = max(self.acc_event_per_ym.iterkeys())
         s["min_ym"] = min(self.acc_event_per_ym.iterkeys())
@@ -250,11 +251,9 @@ class GlobalStatistic:
         s["sum_events"] = sum(self.acc_event_per_ym.itervalues())
         s["main_words"] = self.acc_words.most_common(20)
 
-    def compute_ranks(self,participants):
-        for k,order in self._ranked_metrics.iteritems():
-            rank = OrderedDict(sorted(( (uid,p.metrics[k]) for uid,p in participants.iteritems() ),key=lambda t:t[1],reverse=order))
-            for r,uid in enumerate(rank):
-                self.rankings[uid][k] = r
+    def finalize_metrics(self,participants):
+        self._compute_ranks(participants)
+        self.metrics["max_user_dns"] = max((p.metrics["main_site"][0][1] if len(p.metrics["main_site"]) > 0 else 0 for p in participants.itervalues()))
 
     def _init_metrics(self):
         self.metrics = dict.fromkeys(self._metrics)
@@ -297,6 +296,12 @@ class GlobalStatistic:
         self.acc_event_per_ym[get_ym(dt)] += 1
         self.acc_event_per_ymd[get_ymd(dt)] += 1
 
+    def _compute_ranks(self,participants):
+        for k,order in self._ranked_metrics.iteritems():
+            rank = OrderedDict(sorted(( (uid,p.metrics[k]) for uid,p in participants.iteritems() ),key=lambda t:t[1],reverse=order))
+            for r,uid in enumerate(rank):
+                self.rankings[uid][k] = r
+
 
 class HangoutStatisticManager:
 
@@ -308,8 +313,8 @@ class HangoutStatisticManager:
 
     def run(self):
         self._init_statistics_item()
-        self._update_metrics()
-        self._update_rankings()
+        self._compute_metrics()
+        self._finalize_metrics()
         print json.dumps(self.participants["100004041546029582490"].metrics)
         print json.dumps(self.globalstatistics.rankings["118243095948748495574"])
 
@@ -337,17 +342,17 @@ class HangoutStatisticManager:
                 for ps in self.participants.itervalues():
                     ps.collect_metrics(e)
 
-    def _compute_metrics(self):
-        # compute final metrics
-        self.globalstatistics.compute_metrics()
+    def _update_metrics(self):
+        # update final metrics
+        self.globalstatistics.update_metrics()
         for ps in self.participants.itervalues():
-            ps.compute_metrics(self.globalstatistics)
+            ps.update_metrics(self.globalstatistics)
         # remove inactive users
         self.participants = { uid:p for uid,p in self.participants.iteritems() if p.metrics["sum_events"] > 0  }
 
-    def _update_metrics(self):
+    def _compute_metrics(self):
         self._collect_metrics()
-        self._compute_metrics()
+        self._update_metrics()
 
-    def _update_rankings(self):
-        self.globalstatistics.compute_ranks(self.participants)
+    def _finalize_metrics(self):
+        self.globalstatistics.finalize_metrics(self.participants)
