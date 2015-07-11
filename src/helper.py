@@ -1,13 +1,20 @@
+import inspect
+from itertools import ifilter
+from collections import *
 import nltk
 import re
 from datetime import datetime,date,timedelta
 
+###################################
 # global variable helper
+###################################
 
 nltk.data.path.append('/home/pierre/app/nltk_data')
 STOP = set(nltk.corpus.stopwords.words("french"))
 
+###################################
 # regex helpers
+###################################
 
 RE_URL = re.compile(r'https?://[^ ]*')
 RE_SITE = re.compile(r'https?://([^/ ]*)/?')
@@ -17,7 +24,9 @@ RE_LAUGH = re.compile(r'g.nial|ahah|haha|mdr|excellent|lol|.norme|xD|:D|\^\^',re
 RE_COFFEE = re.compile(r'caf.+',re.IGNORECASE)
 RE_CHOUQUETTE = re.compile(r'chouquette',re.IGNORECASE)
 
+###################################
 # lambda helpers
+###################################
 
 get_ym = lambda dt: dt[:6]
 get_ymd = lambda dt: dt[:8]
@@ -25,10 +34,12 @@ get_ymdh = lambda dt: dt[:-4]
 get_hms = lambda dt: dt[-6:]
 get_hm = lambda dt: dt[-6:-3] + '0' # by 10 minutes step
 
-# function helpers
+max_counter_value = lambda counter:counter.most_common(1)[0][1]
+pretty_time = lambda stime:stime[:2] + ":" + stime[2:4]
 
-def pretty_time(stime):
-    return stime[:2] + ":" + stime[2:4]
+###################################
+# function helpers
+###################################
 
 def extract_site(url):
     # extract full domain name
@@ -93,8 +104,59 @@ def iter_minutes(hm1,hm2,step=1):
                 stime = str(h*100+m)
                 yield '0'*(4-len(stime)) + stime
 
-def iter_words(text):
-    tokens = RE_WORDS.findall(text.lower())
+def iter_words(tokens):
     for w in tokens:
         if len(w) > 3 and w not in STOP:
             yield w
+
+###################################
+# statistics generic objects
+###################################
+
+class Calculus:
+
+    def __init__(self,func_reducer,initializer=None,**kwargs):
+        # get args
+        self.func_reducer = func_reducer
+        self.initializer = initializer
+        self.optional = kwargs
+        # init args func_reducer
+        self.args = inspect.getargspec(self.func_reducer).args
+        # remove first args for reducer, because it is not an optional arguments
+        if self.initializer:
+            self.args.pop(0)
+        self.result = self.initializer
+
+    def update(self, **kwargs):
+        # build arguments
+        args = { k:kwargs[k] for k in self.args }
+        args.update(self.optional)
+        # select reducer or mapper method signature if there is or not a initializer
+        if self.initializer:
+            result = self.func_reducer(self.result, **args)
+            if result:
+                self.result = result
+        else:
+            self.result = self.func_reducer(**args)
+
+
+class MetricsItem:
+
+    def __init__(self):
+        self._metrics = {}
+
+    def iter_incremental_metrics(self):
+        for key,calculus in self._metrics.iteritems():
+            if calculus and calculus.initializer:
+                yield key
+
+    def iter_final_metrics(self):
+        for key,calculus in self._metrics.iteritems():
+            if calculus and not calculus.initializer:
+                yield key
+
+    def update_metrics(self,key,*args,**kwargs):
+        self._metrics[key].update(*args,**kwargs)
+
+    def metrics(self):
+        return { key:calculus.result for key,calculus in self._metrics.iteritems() }
