@@ -11,18 +11,18 @@ def update_alias(this,sender,content,re_aliases):
 def update_best_links(this,sender,text,urls,pending_link):
     if RE_LAUGH.search(text) and pending_link:
         # add link to user's best link list
-        this[pending_link[0]].add(pending_link[1])
+        this[pending_link[0][0]].add(pending_link[0][1])
     # update pending link with last link in event
     if len(urls) > 0:
         # pending_link = [ user, url, remaining active time ]
-        pending_link = [sender,urls[-1],4]
+        pending_link.append([sender,urls[-1],4])
     # update persistance of pending url
     if pending_link:
-        if pending_link[2] > 0:
-            pending_link[2] -= 1
+        if pending_link[0][2] > 0:
+            pending_link[0][2] -= 1
         # flush pending url
         else:
-            pending_link = None
+            pending_link.pop(0)
 
 def update_ranked(participants,ranked_metrics):
     result = { uid : {} for uid in participants.iterkeys() }

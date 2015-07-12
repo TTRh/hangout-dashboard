@@ -72,6 +72,7 @@ class GlobalMetrics(MetricsItem):
     def __init__(self):
 
         self.re_participant_aliases = {}
+        self.pending_list = []
 
         # Here is all global metrics computed
         self._metrics = {
@@ -82,7 +83,7 @@ class GlobalMetrics(MetricsItem):
             "g_alias" : Calculus(metrics.update_alias,defaultdict(set),re_aliases = self.re_participant_aliases),
             "g_sum_events" : Calculus(lambda x:x+1,0),
             "g_corpus" : Calculus(lambda x,sender,words: x[sender].update(iter_words(words)),defaultdict(set)),
-            "g_best_links" : Calculus(metrics.update_best_links,defaultdict(set),pending_link = None),
+            "g_best_links" : Calculus(metrics.update_best_links,defaultdict(set),pending_link = self.pending_list),
             "g_acc_ym" : Calculus(lambda x,ym: x.add(ym),set()),
             "g_acc_ymd" : Calculus(lambda x,ymd: x.add(ymd),set()),
             "g_acc_words" : Calculus(lambda x,words: x.update(iter_words(words)),Counter())
