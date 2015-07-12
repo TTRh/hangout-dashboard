@@ -122,8 +122,10 @@ class Calculus:
         self.optional = kwargs
         # init args func_reducer
         self.args = inspect.getargspec(self.func_reducer).args
+        # remove arguments from optional args because thoses ones are not dynamic
+        self.args = [ arg for arg in self.args if arg not in kwargs.iterkeys() ]
         # remove first args for reducer, because it is not an optional arguments
-        if self.initializer:
+        if self.initializer is not None:
             self.args.pop(0)
         self.result = self.initializer
 
@@ -131,10 +133,10 @@ class Calculus:
         # build arguments
         args = { k:kwargs[k] for k in self.args }
         args.update(self.optional)
-        # select reducer or mapper method signature if there is or not a initializer
-        if self.initializer:
+        # select reducer or mapper method signature if there is or not a initializer at None
+        if self.initializer is not None:
             result = self.func_reducer(self.result, **args)
-            if result:
+            if result is not None:
                 self.result = result
         else:
             self.result = self.func_reducer(**args)
@@ -147,16 +149,19 @@ class MetricsItem:
 
     def iter_incremental_metrics(self):
         for key,calculus in self._metrics.iteritems():
-            if calculus and calculus.initializer:
-                yield key
+            if calculus and calculus.initializer is not None:
+                yield key,calculus
 
     def iter_final_metrics(self):
         for key,calculus in self._metrics.iteritems():
-            if calculus and not calculus.initializer:
-                yield key
+            if calculus and calculus.initializer is None:
+                yield key,calculus
 
-    def update_metrics(self,key,*args,**kwargs):
-        self._metrics[key].update(*args,**kwargs)
-
-    def metrics(self):
-        return { key:calculus.result for key,calculus in self._metrics.iteritems() }
+    def metrics(self,key = None):
+        if key:
+            if self._metrics[key]:
+                return self._metrics[key].result
+            else:
+              return None
+        else:
+            return { key:calculus.result for key,calculus in self._metrics.iteritems() if calculus }

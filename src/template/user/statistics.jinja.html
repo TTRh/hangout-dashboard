@@ -1,18 +1,18 @@
 <div class="box clearfix">
   <h2>Funny facts</h2>
-  {{ item(umetrics.avg_day_events|round(1), "average number of event per day") }}
-  {{ item(umetrics.max_day_events, "max event in one day") }}
-  {{ item(umetrics.sum_url,"total number of urls") }}
-  {{ item(umetrics.sum_uniq_words,"total unique words") }}
-  {{ item(umetrics.avg_min_time_event|slice(3)|map('join')|join(':')|truncate(5,True,''),"avg first time event") }}
-  {{ item(umetrics.avg_max_time_event|slice(3)|map('join')|join(':')|truncate(5,True,''),"avg last time event") }}
-  {{ item(umetrics.sum_reference,"total first name apparition") }}
-  {{ item(umetrics.sum_laughs,"total number laughs") }}
-  {% if umetrics.sum_coffee > 0 %}
-    {{ item(umetrics.sum_coffee,"total coffee call") }}
+  {{ item(metrics.avg_day_events|round(1), "average number of event per day") }}
+  {{ item(metrics.max_day_events, "max event in one day") }}
+  {{ item(metrics.sum_url,"total number of urls") }}
+  {{ item(metrics.sum_uniq_words,"total unique words") }}
+  {{ item(metrics.avg_min_time_event|slice(3)|map('join')|join(':')|truncate(5,True,''),"avg first time event") }}
+  {{ item(metrics.avg_max_time_event|slice(3)|map('join')|join(':')|truncate(5,True,''),"avg last time event") }}
+  {{ item(metrics.sum_reference,"total first name apparition") }}
+  {{ item(metrics.sum_laughs,"total number laughs") }}
+  {% if metrics.sum_coffee > 0 %}
+    {{ item(metrics.sum_coffee,"total coffee call") }}
   {% endif %}
-  {% if umetrics.sum_chouquette > 0 %}
-    {{ item(umetrics.sum_chouquette,"total chouquette call") }}
+  {% if metrics.sum_chouquette > 0 %}
+    {{ item(metrics.sum_chouquette,"total chouquette call") }}
   {% endif %}
 </div>
 

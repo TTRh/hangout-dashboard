@@ -2,8 +2,8 @@
 <div class="box">
   <h2>Skills</h2>
   <div class="skills">
-    {% for site,count in umetrics.main_site %}
-    <div class="item-skills" data-percent="{{ count|smoothlognorm(gmetrics.metrics.max_user_dns) }}" data-toggle="tooltip" data-placement="right" title="{{site}} x{{count}}">{{ site }}</div>
+    {% for site,count in metrics.main_site %}
+    <div class="item-skills" data-percent="{{ count|smoothlognorm(metrics.max_user_dns) }}" data-toggle="tooltip" data-placement="right" title="{{site}} x{{count}}">{{ site }}</div>
     {% endfor %}
     <div class="skills-legend clearfix">
       <div class="legend-left legend">Newbe</div>

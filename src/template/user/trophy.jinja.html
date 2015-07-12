@@ -7,16 +7,16 @@
 <!-- TROPHY -->
 <div class="box">
   <h2>Trophy</h2>
-  {{ trophy(gmetrics.rankings.sum_coffee < 3,"Coffee Clock Man","Hello, i'm a caffeine junkie.") }}
-  {{ trophy(gmetrics.rankings.sum_uniq_words < 2,"Shakespeare", "I'm clever bitch ! I have a fucking huge vocabulary ! Do you even understand thoses words i'm using ?") }}
-  {{ trophy(gmetrics.rankings.sum_reference < 3,"Famous", "Shoot me i'm famous ! Everybody talks about me ...") }}
-  {{ trophy(gmetrics.rankings.sum_characters < 4 or gmetrics.rankings.sum_words < 4 or gmetrics.rankings.sum_events < 4 ,"Main contributor", "What ?? Heuu ... ahem ... but compilations are sooo long ...") }}
-  {{ trophy(gmetrics.rankings.sum_chouquette < 3,"Hungry", "Subscribe to alert chouquette channel ! To get a sleep, i count chouquettes from Robillard delivery ...") }}
-  {{ trophy(gmetrics.rankings.sum_url < 4,"Lazybones", "I'm a real bot crawler ! I already post your gif newbie !") }}
-  {{ trophy(gmetrics.rankings.avg_min_time_event < 2,"First !", "I know when you arrive the morning !") }}
-  {{ trophy(gmetrics.rankings.avg_max_time_event < 2,"Last !", "I know when you leave the evening !") }}
-  {{ trophy(umetrics.perc_events < 0.01,"Stalker", "I record everythings, maybe i'm a NSA bot ?") }}
-  {{ trophy(gmetrics.rankings.sum_hashtags < 3,"#hashtags", "I always add some context, it helps to understand.") }}
-  {{ trophy(gmetrics.rankings.sum_laughs < 3,"Good audience", "If you tell me a joke - even bad - maybe i will joke ... and not only because i'm polite") }}
+  {{ trophy(metrics.rankings.sum_coffee < 3,"Coffee Clock Man","Hello, i'm a caffeine junkie.") }}
+  {{ trophy(metrics.rankings.sum_uniq_words < 2,"Shakespeare", "I'm clever bitch ! I have a fucking huge vocabulary ! Do you even understand thoses words i'm using ?") }}
+  {{ trophy(metrics.rankings.sum_reference < 3,"Famous", "Shoot me i'm famous ! Everybody talks about me ...") }}
+  {{ trophy(metrics.rankings.sum_characters < 4 or metrics.rankings.sum_words < 4 or metrics.rankings.sum_events < 4 ,"Main contributor", "What ?? Heuu ... ahem ... but compilations are sooo long ...") }}
+  {{ trophy(metrics.rankings.sum_chouquette < 3,"Hungry", "Subscribe to alert chouquette channel ! To get a sleep, i count chouquettes from Robillard delivery ...") }}
+  {{ trophy(metrics.rankings.sum_url < 4,"Lazybones", "I'm a real bot crawler ! I already post your gif newbie !") }}
+  {{ trophy(metrics.rankings.avg_min_time_event < 2,"First !", "I know when you arrive the morning !") }}
+  {{ trophy(metrics.rankings.avg_max_time_event < 2,"Last !", "I know when you leave the evening !") }}
+  {{ trophy(metrics.perc_events < 0.01,"Stalker", "I record everythings, maybe i'm a NSA bot ?") }}
+  {{ trophy(metrics.rankings.sum_hashtags < 3,"#hashtags", "I always add some context, it helps to understand.") }}
+  {{ trophy(metrics.rankings.sum_laughs < 3,"Good audience", "If you tell me a joke - even bad - maybe i will joke ... and not only because i'm polite") }}
 </div>
 

@@ -51,7 +51,7 @@ class Conversation:
     def iter_participant(self):
         return self.participants.itervalues()
 
-    def iter_event(self):
+    def iter_events(self):
         return iter(self.events)
 
     def get_sorted_events(self):
