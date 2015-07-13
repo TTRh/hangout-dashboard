@@ -72,7 +72,7 @@ class GlobalMetrics(MetricsItem):
     def __init__(self):
 
         self.re_participant_aliases = {}
-        self.pending_list = []
+        self.pending_list = metrics.PendingLink()
 
         # Here is all global metrics computed
         self._metrics = {
@@ -157,7 +157,7 @@ class HangoutStatisticEngine:
         self._update_metrics()
         print self.participants_metrics["100004041546029582490"].statistics()
         print self.global_metrics.metrics("g_alias")
-        print self.global_metrics.metrics("g_best_links")
+        # print self.global_metrics.metrics("g_best_links")
 
     def _collect_metrics(self,event):
         p = self.participants_metrics[event.sender]
