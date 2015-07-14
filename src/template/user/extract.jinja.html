@@ -15,7 +15,7 @@
         <h3>alias(es) founded</h3>
         <p>
           {% for item in metrics.aliases %}
-          {{ item[0] + "<span> - " + item[1] + "</span> " }}
+          {{ item[0] + "<span> - " + item[1] + "</span>" }}
           {% endfor %}
         </p>
       </div>
@@ -35,7 +35,7 @@
         <h3>awesome link(s)</h3>
         <p>
           {% for item in metrics.bestlinks %}
-          {{ '<a href="' + item + '" target="_blank">' + item + '</a> '  }}
+          {{ '<a href="' + item + '" target="_blank">' + item + '</a>'  }}
           {% endfor %}
         </p>
       </div>
