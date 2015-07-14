@@ -33,7 +33,6 @@ def create_alias_re(name):
             alias_pattern += '|' + fullname[0] + '.*\w+.*' + composite_name[-1]
     return re.compile(alias_pattern,re.UNICODE|re.IGNORECASE)
 
-
 def update_alias(this,sender,content,re_aliases):
     for uid,regex in re_aliases.iteritems():
         alias = regex.search(content)
@@ -70,3 +69,15 @@ def update_favorite_words(acc_words,g_corpus):
     idf = lambda w: log(1.0*total_users/reduce(lambda x,y: x + (1 if w in y else 0),g_corpus.itervalues(),0))
     tfidf = OrderedDict(sorted(((w,ftd(n)*idf(w)) for w,n in acc_words.iteritems()), key=lambda x:x[1], reverse=True))
     return tfidf.items()[:30]
+
+def shift_hour(hms,hour):
+    h_shift = str((int(hms[:2]) + hour)%24)
+    hms_sifted = '0' * (2-len(h_shift)) + h_shift + hms[2:]
+    return hms_sifted
+
+def closest_event(acc_hms_per_ymd,pivot,direction):
+    all_hms = reduce(lambda x,y:x|y,acc_hms_per_ymd.itervalues())
+    all_hms_shifted = []
+    for hms in all_hms:
+      all_hms_shifted.append(shift_hour(hms,-pivot))
+    return shift_hour(direction(all_hms_shifted),pivot)

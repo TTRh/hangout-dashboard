@@ -42,8 +42,8 @@ class ParticipantMetrics(MetricsItem):
             "sparkline_sum_events_vs_day": Calculus(lambda acc_event_per_ymd,min_ymd,max_ymd:[(k,acc_event_per_ymd[k]) for k in iter_days(min_ymd,max_ymd)]), # number of event per day - event counter per Ymd
             "max_hour_events": Calculus(lambda acc_event_per_ymdh:max_counter_value(acc_event_per_ymdh)), # max number of events posted in one hour - event counter per YmdH
             "sparkline_sum_events_vs_time": Calculus(lambda acc_event_per_hm:[(k,acc_event_per_hm[k]) for k in iter_minutes('0000','2359',10)]), # sum number of event per time in a day - event counter per YmdHM
-            "max_time_event": Calculus(lambda acc_hms_per_ymd:max(reduce(lambda x,y:x|y,acc_hms_per_ymd.itervalues()))), # max time event - incremental / default dict listed HMS per Ymd
-            "min_time_event": Calculus(lambda acc_hms_per_ymd:min(reduce(lambda x,y:x|y,acc_hms_per_ymd.itervalues()))), # min time event - incremental / default dict listed HMS per Ymd
+            "lastest_event": Calculus(lambda acc_hms_per_ymd: metrics.closest_event(acc_hms_per_ymd,5,max)), # max time event - incremental / default dict listed HMS per Ymd
+            "earliest_event": Calculus(lambda acc_hms_per_ymd: metrics.closest_event(acc_hms_per_ymd,5,min)), # min time event - incremental / default dict listed HMS per Ymd
             "avg_max_time_event": Calculus(lambda acc_hms_per_ymd:median_low(sorted((max(l) for l in acc_hms_per_ymd.itervalues())))) ,  # median low time of last daily event - default dict listed HMS per Ymd
             "avg_min_time_event": Calculus(lambda acc_hms_per_ymd:median_low(sorted((min(l) for l in acc_hms_per_ymd.itervalues())))) , # median low time of first daily event - default dict listed HMS per Ymd
         }
