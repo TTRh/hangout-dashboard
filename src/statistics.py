@@ -89,15 +89,8 @@ class GlobalMetrics(MetricsItem):
         }
 
     def add_participant(self,p):
-        self._add_participant_alias_re(p)
+        self.re_participant_aliases[p.uid] = metrics.create_alias_re(p.name)
 
-    def _add_participant_alias_re(self,p):
-        name = p.name.split(' ')
-        # alias regex
-        alias_pattern = name[0] + '\w+'
-        if len(name) >= 2:
-            alias_pattern += '|' + name[0] + '.*\w+.*' + name[-1]
-        self.re_participant_aliases[p.uid] = re.compile(alias_pattern,re.UNICODE|re.IGNORECASE)
 
 class ScoreMetrics(MetricsItem):
 

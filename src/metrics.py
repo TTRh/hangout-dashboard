@@ -19,6 +19,21 @@ class PendingLink:
         self.url = None
         self.duration = None
 
+def create_alias_re(name):
+    fullname = name.split(' ')
+    # simple alias by first name call
+    alias_pattern = fullname[0] + '\w+'
+    # alias with first and last name
+    if len(fullname) > 1:
+        alias_pattern += '|' + fullname[0] + '.*\w+.*' + fullname[-1]
+        composite_name = fullname[-1].split('-')
+        # alias for composite last name
+        if len(composite_name) > 1:
+            alias_pattern += '|' + fullname[0] + '.*\w+.*' + composite_name[0]
+            alias_pattern += '|' + fullname[0] + '.*\w+.*' + composite_name[-1]
+    return re.compile(alias_pattern,re.UNICODE|re.IGNORECASE)
+
+
 def update_alias(this,sender,content,re_aliases):
     for uid,regex in re_aliases.iteritems():
         alias = regex.search(content)
