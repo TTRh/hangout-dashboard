@@ -6,7 +6,7 @@ import argparse
 from hangout import *
 from parser import *
 from writer import *
-from statistics2 import *
+from statistics import *
 
 def main(argv):
 
