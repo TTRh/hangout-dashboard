@@ -137,9 +137,10 @@ class HangoutStatisticEngine:
     def _init_metrics_items(self):
         for c in self.conversations:
             for p in self.hangout.get_conversation(c).iter_participant():
-                self.global_metrics.add_participant(p)
-                if p.uid not in self.participants_metrics:
-                    self.participants_metrics[p.uid] = ParticipantMetrics(p)
+                if p.name:
+                    self.global_metrics.add_participant(p)
+                    if p.uid not in self.participants_metrics:
+                        self.participants_metrics[p.uid] = ParticipantMetrics(p)
 
     def run(self):
         # init metrics
@@ -155,6 +156,7 @@ class HangoutStatisticEngine:
         self._remove_inactive_users()
         self._update_metrics()
         print self.participants_metrics["100004041546029582490"].statistics()
+        # print self.participants_metrics["109861864489840763994"].statistics()
         print self.global_metrics.metrics("g_alias")
         # print self.global_metrics.metrics("g_best_links")
 
@@ -186,7 +188,7 @@ class HangoutStatisticEngine:
             calculus.update(**values)
 
     def _remove_inactive_users(self):
-      self.participants_metrics = { uid:p for uid,p in self.participants_metrics.iteritems() if p.metrics("sum_events") > 0 }
+      self.participants_metrics = { uid:p for uid,p in self.participants_metrics.iteritems() if p.metrics("sum_events") > 0 and p.metrics("sum_words") > 0 }
 
     def _update_metrics(self):
         values = self.global_metrics.metrics()

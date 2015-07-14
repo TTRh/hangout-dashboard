@@ -19,7 +19,7 @@ def main(argv):
     hg = Hangout()
 
     # 2 - read fill and describe
-    hr = HangoutReader(args.jsonfile,hg)
+    hr = HangoutReader(args.jsonfile,hg,"../data/user.json")
     hr.read()
     hg.describe()
 

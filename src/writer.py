@@ -96,9 +96,3 @@ class HangoutCsvWriter:
                     # number words
                     row.append(len(text.split()))
                     writer.writerow(row)
-
-if __name__ == '__main__':
-
-    env = Environment(loader=FileSystemLoader("template"))
-    template = env.get_template("test.html")
-    print template.render(foo="Arnaud Canu")

@@ -34,7 +34,7 @@ get_ymdh = lambda dt: dt[:-4]
 get_hms = lambda dt: dt[-6:]
 get_hm = lambda dt: dt[-6:-3] + '0' # by 10 minutes step
 
-max_counter_value = lambda counter:counter.most_common(1)[0][1]
+max_counter_value = lambda counter: counter.most_common(1)[0][1] if len(counter) > 0 else None
 pretty_time = lambda stime:stime[:2] + ":" + stime[2:4]
 
 ###################################
