@@ -3,7 +3,7 @@
  ***************************************/
 
 // sparkline generator with xscale information
-function sparkline_xscale(selector,formater) {
+function sparkline_xscale(type,selector,formater) {
   var sparkline = $(selector);
   var data = JSON.parse(sparkline.html());
   var xscale = data.reduce(function(x,y,i){
@@ -30,19 +30,23 @@ function sparkline_xscale(selector,formater) {
 
 function update_sparkline() {
   // init sparklines HH:MM by 10 minutes step
-  sparkline_xscale('.sparkline.xscale-hm',function(k){
+  sparkline_xscale('line','.sparkline.xscale-hm',function(k){
       return k.substr(0,2) + "h" + k.substr(2);
     }
   );
-  
+  // init sparklines dow
+  sparkline_xscale('bar','.sparkline.xscale-dow',function(k){
+      dow = { "0": "Monday", "1": "Tuesday", "2": "Wednesday", "3": "Thursday", "4": "Friday", "5": "Saturday", "6": "Sunday" }
+      return dow[k]
+    }
+  );
   // init sparklines dd/mm/YYYY
-  sparkline_xscale('.sparkline.xscale-ymd',function(k){
+  sparkline_xscale('line','.sparkline.xscale-ymd',function(k){
       return k.substr(6) + "/" + k.substr(4,2) + "/" + k.substr(0,4);
     }
   );
-  
   // init sparklines mm/YYYY
-  sparkline_xscale('.sparkline.xscale-ym',function(k){
+  sparkline_xscale('bar','.sparkline.xscale-ym',function(k){
       return k.substr(4) + "/" + k.substr(0,4);
     }
   );

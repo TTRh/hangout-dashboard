@@ -1,6 +1,7 @@
 <!-- ACTIVITY -->
 <div class="box">
   <h2>Activity</h2>
+  <!-- by hours -->
   <div class="activity clearfix">
     <div class="col-xs-3">
       <div class="what">By hour</div>
@@ -10,6 +11,17 @@
       <div class="description"><span class="sparkline xscale-hm">{{ metrics.sparkline_sum_events_vs_time|tojson }}</span></div>
     </div>
   </div>
+  <!-- by dow -->
+  <div class="activity clearfix">
+    <div class="col-xs-3">
+      <div class="what">By day of week</div>
+      <div class="how">sum of events</div>
+    </div>
+    <div class="col-xs-9">
+      <div class="description"><span class="sparkline xscale-dow">{{ metrics.sparkline_sum_events_vs_dow|tojson }}</span></div>
+    </div>
+  </div>
+  <!-- by days -->
   <div class="activity clearfix">
     <div class="col-xs-3">
       <div class="what">By days</div>
@@ -19,6 +31,7 @@
       <div class="description"><span class="sparkline xscale-ymd">{{ metrics.sparkline_sum_events_vs_day|tojson }}</span></div>
     </div>
   </div>
+  <!-- by months -->
   <div class="activity clearfix">
     <div class="col-xs-3">
       <div class="what">By months</div>
