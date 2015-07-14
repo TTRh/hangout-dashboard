@@ -9,7 +9,7 @@
   <h2>Trophy</h2>
   {{ trophy(metrics.rankings.sum_coffee < 3,"Coffee Clock Man","Hello, i'm a caffeine junkie.") }}
   {{ trophy(metrics.rankings.sum_uniq_words < 2,"Shakespeare", "I'm clever bitch ! I have a fucking huge vocabulary ! Do you even understand thoses words i'm using ?") }}
-  {{ trophy(metrics.rankings.sum_reference < 3,"Famous", "Shoot me i'm famous ! Everybody talks about me ...") }}
+  {{ trophy(metrics.rankings.sum_reference < 3 and metrics.perc_events > 0.01,"Famous", "Shoot me i'm famous ! Everybody talks about me ...") }}
   {{ trophy(metrics.rankings.sum_characters < 4 or metrics.rankings.sum_words < 4 or metrics.rankings.sum_events < 4 ,"Main contributor", "What ?? Heuu ... ahem ... but compilations are sooo long ...") }}
   {{ trophy(metrics.rankings.sum_chouquette < 3,"Hungry", "Subscribe to alert chouquette channel ! To get a sleep, i count chouquettes from Robillard delivery ...") }}
   {{ trophy(metrics.rankings.sum_url < 4,"Lazybones", "I'm a real bot crawler ! I already post your gif newbie !") }}
