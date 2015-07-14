@@ -7,10 +7,13 @@ from jinja2 import Environment, FileSystemLoader
 # function helpers
 
 def tojson(obj):
-  return json.dumps(obj)
+    return json.dumps(obj)
 
 def smoothlognorm(n,nmax):
-  return log(1+n)/log(nmax)
+    return log(1+n)/log(nmax)
+
+def dow(n):
+    return dict(zip(xrange(0,7),['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']))[n]
 
 # writers
 
@@ -24,6 +27,7 @@ class HangoutStatisticHtmlWriter:
         self.env = Environment(loader=FileSystemLoader(self._template_dir))
         self.env.filters['tojson'] = tojson
         self.env.filters['smoothlognorm'] = smoothlognorm
+        self.env.filters['dow'] = dow
 
     def _load_user_info(self,path_file):
         if path_file is not None:

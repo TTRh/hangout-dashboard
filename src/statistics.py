@@ -10,15 +10,11 @@ class ParticipantMetrics(MetricsItem):
 
         # Here is all participants statistics
         self._statistics = {
-            # global
-            "sum_reference" : Calculus(lambda g_acc_words,name:g_acc_words[name.split(' ')[0].lower()]), # total number of user reference - global words counter
+            # text
             "quotes": None, # list of quote - apply quote parser on global events
-            # incremental
-            "sum_events" : Calculus(lambda x:x+1, 0), # total number of events - incremental
-            "perc_events" : Calculus(lambda sum_events,g_sum_events:1.0*sum_events/g_sum_events), # % of events over total events
+            "sum_reference" : Calculus(lambda g_acc_words,name:g_acc_words[name.split(' ')[0].lower()]), # total number of user reference - global words counter
             "sum_url": Calculus(lambda x,urls:x+len(urls),0), # total numbers of links - incremental
             "sum_words": Calculus(lambda x,words:x+len(words),0), # total number of words - incremental
-            # text
             "sum_characters": Calculus(lambda x,content:x+len(content),0), # total number of characters - incremental
             "avg_characters_event": Calculus(lambda sum_characters,sum_events:1.0*sum_characters/sum_events), # avg number of characters by events
             "sum_uniq_words": Calculus(lambda acc_words:len(acc_words)), # total number of unique words (vocabulary) - set words
@@ -34,6 +30,8 @@ class ParticipantMetrics(MetricsItem):
             "sum_coffee": Calculus(lambda x,text:x+len(RE_COFFEE.findall(text)),0), # total number of coffee call
             "sum_chouquette": Calculus(lambda x,text:x+len(RE_CHOUQUETTE.findall(text)),0), # total number of chouquette call
             # events counter
+            "sum_events" : Calculus(lambda x:x+1, 0), # total number of events - incremental
+            "perc_events" : Calculus(lambda sum_events,g_sum_events:1.0*sum_events/g_sum_events), # % of events over total events
             "sparkline_sum_events_vs_month": Calculus(lambda acc_event_per_ym,min_ym,max_ym:[(k,acc_event_per_ym[str(k)]) for k in iter_months(min_ym,max_ym)]), # sum of event per month - event counter per Ym
             "avg_day_events": Calculus(lambda acc_event_per_ymd:mean(acc_event_per_ymd.itervalues())), # avg number of event by day - event counter per Ymd
             "avg_day_links": None, # avg number of links by day - links counter per Ymd
@@ -47,6 +45,7 @@ class ParticipantMetrics(MetricsItem):
             "earliest_event": Calculus(lambda acc_hms_per_ymd: metrics.closest_event(acc_hms_per_ymd,5,min)), # min time event - incremental / default dict listed HMS per Ymd
             "avg_max_time_event": Calculus(lambda acc_hms_per_ymd:median_low(sorted((max(l) for l in acc_hms_per_ymd.itervalues())))) ,  # median low time of last daily event - default dict listed HMS per Ymd
             "avg_min_time_event": Calculus(lambda acc_hms_per_ymd:median_low(sorted((min(l) for l in acc_hms_per_ymd.itervalues())))) , # median low time of first daily event - default dict listed HMS per Ymd
+            "max_dow_events" : Calculus(lambda acc_event_per_dow:max_counter_key(acc_event_per_dow))
         }
 
         self._accumulators = {
