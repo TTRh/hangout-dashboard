@@ -24,13 +24,13 @@ def main(argv):
     hg.describe()
 
     # 3 - compute statistics
-    hs = HangoutStatisticManager(hg)
-    hs.conversation_ids = ["UgybBVlmYKlQ5IF4Ccl4AaABAQ"]
+    hs = HangoutStatisticEngine(hg)
+    hs.conversations = ["UgybBVlmYKlQ5IF4Ccl4AaABAQ"]
     hs.run()
 
     # 4 - dump statistics
-    hsw = HangoutStatisticJsonWriter(hs)
-    hsw.write('HangoutsStatistic.json')
+    # hsw = HangoutStatisticJsonWriter(hs)
+    # hsw.write('HangoutsStatistic.json')
 
     # 5 - dump dashboard
     hsd = HangoutStatisticHtmlWriter(hs,"../data/user.json")

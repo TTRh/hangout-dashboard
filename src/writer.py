@@ -35,17 +35,20 @@ class HangoutStatisticHtmlWriter:
     def _views(self,name):
         return name + ".jinja.html"
 
+    def _get_metrics(self,uid,p):
+        result = p.statistics()
+        result["aliases"] = [ (alias,self.users[sender]["name"]) for alias,sender in self.statistics.global_metrics.metrics("g_alias")[uid] ]
+        result["bestlinks"] = self.statistics.global_metrics.metrics("g_best_links")[uid]
+        result["rankings"] = self.statistics.score_metrics.metrics("ranks")[uid]
+        result["max_user_dns"] = self.statistics.score_metrics.metrics("max_user_dns")
+        result["userinfo"] = self.users[uid]
+        return result
+
     def _write_user(self,output_dir):
         self.template = self.env.get_template(self._views("user/main"))
-        for uid,user in self.statistics.iter_participant():
-            global_metrics = {
-                "metrics" : self.statistics.globalstatistics.metrics,
-                "rankings" : self.statistics.globalstatistics.rankings[uid],
-                "bestlinks": self.statistics.globalstatistics.acc_best_links[uid],
-                "userinfo": self.users[uid]
-            }
+        for uid,p in self.statistics.participants_metrics.iteritems():
             with open(output_dir + "/" + uid + ".html",'wb') as outfile:
-                outfile.write(self.template.render(umetrics=user.metrics,gmetrics=global_metrics).encode('utf8'))
+                outfile.write(self.template.render(metrics=self._get_metrics(uid,p)).encode('utf8'))
 
     def _write_overview(self,output_dir):
         self.template = self.env.get_template(self._views("overview/main"))
@@ -63,7 +66,7 @@ class HangoutStatisticJsonWriter:
 
     def write(self,filename):
         with open(filename,'wb') as outfile:
-            result = map(lambda x:x[1].metrics,self.statistics.iter_participant())
+            result = map(lambda x:x[1].metrics,self.statistics.iter_participant_statistics())
             json.dump(result,outfile,indent=4)
 
 

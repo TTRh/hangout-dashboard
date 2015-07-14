@@ -3,39 +3,39 @@
   <h2>Extract</h2>
   <ul id="extract" class="clearfix">
     <li>
-      <div class="year pull-left">{{ umetrics.longest_words[0]|count }}</div>
+      <div class="year pull-left">{{ metrics.longest_words[0]|count }}</div>
       <div class="description pull-right">
         <h3>characters in longuest word</h3>
-        <p>{{ umetrics.longest_words|join(' ') }}</p>
+        <p>{{ metrics.longest_words|join(' ') }}</p>
       </div>
     </li>
     <li>
-      <div class="year pull-left">{{ umetrics.aliases|count }}</div>
+      <div class="year pull-left">{{ metrics.aliases|count }}</div>
       <div class="description pull-right">
         <h3>alias(es) founded</h3>
         <p>
-          {% for item in umetrics.aliases %}
-          {{ item[0] + "<span> - " + item[1] + "</span> " }}
+          {% for item in metrics.aliases %}
+          {{ item[0] + "<span> - " + item[1] + "</span>" }}
           {% endfor %}
         </p>
       </div>
     </li>
     <li>
-      <div class="year pull-left">{{ umetrics.hashtags|count }}</div>
+      <div class="year pull-left">{{ metrics.hashtags|count }}</div>
       <div class="description pull-right">
         <h3>hashtag(s) used</h3>
         <p>
-          {{ umetrics.hashtags|map(attribute='0')|join(' ') }}
+          {{ metrics.hashtags|map(attribute='0')|join(' ') }}
         </p>
       </div>
     </li>
     <li>
-      <div class="year pull-left">{{ gmetrics.bestlinks|count }}</div>
+      <div class="year pull-left">{{ metrics.bestlinks|count }}</div>
       <div class="description pull-right">
         <h3>awesome link(s)</h3>
         <p>
-          {% for item in gmetrics.bestlinks %}
-          {{ '<a href="' + item + '" target="_blank">' + item + '</a> '  }}
+          {% for item in metrics.bestlinks %}
+          {{ '<a href="' + item + '" target="_blank">' + item + '</a>'  }}
           {% endfor %}
         </p>
       </div>
