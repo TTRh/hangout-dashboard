@@ -7,16 +7,21 @@
 <!-- TROPHY -->
 <div class="box">
   <h2>Trophy</h2>
+  {{ trophy(metrics.rankings.sum_best_links < 4 ,"Funny","Approuved humor guarantee") }}
+  {{ trophy(metrics.rankings.sum_weekends_events < 4 ,"J7","Hang out forever !") }}
+  {{ trophy(metrics.rankings.sum_nights_events < 4 ,"H24","Never hang up !") }}
   {{ trophy(metrics.max_dow_events == 4 ,"Friday tour","Weekends begin Friday. At 9:00. For my part.") }}
   {{ trophy(metrics.rankings.sum_coffee < 3,"Coffee Clock Man","Hello, i'm a caffeine junkie.") }}
   {{ trophy(metrics.rankings.sum_uniq_words < 2,"Shakespeare", "I'm clever bitch ! I have a fucking huge vocabulary ! Do you even understand thoses words i'm using ?") }}
   {{ trophy(metrics.rankings.sum_reference < 3 and metrics.perc_events > 0.01,"Famous", "Shoot me i'm famous ! Everybody talks about me ...") }}
+  {{ trophy(metrics.rankings.sum_events == 0, "Lord Master King", "I'm the first contributor ! I run the universe !") }}
   {{ trophy(metrics.rankings.sum_characters < 4 or metrics.rankings.sum_words < 4 or metrics.rankings.sum_events < 4 ,"Main contributor", "What ?? Heuu ... ahem ... but my compilations are sooo long ...") }}
+  {{ trophy(metrics.rankings.sum_characters > 4 and metrics.rankings.sum_words > 4 and metrics.rankings.sum_events > 4 and metrics.perc_events > 0.01 ,"Amateur contributor", "I'm a young padawan, but i'm a fast learner ...") }}
+  {{ trophy(metrics.perc_events < 0.01,"Stalker", "I record everythings, maybe i'm a NSA bot ...") }}
   {{ trophy(metrics.rankings.sum_chouquette < 3,"Hungry", "Subscribe to alert chouquette channel ! To get a sleep, i count chouquettes from Robillard delivery ...") }}
-  {{ trophy(metrics.rankings.sum_url < 4,"Lazybones", "I'm a real bot crawler ! I already post your gif newbie !") }}
+  {{ trophy(metrics.rankings.sum_url < 4,"Bot", "I'm a real bot crawler ! I already post your gif newbie !") }}
   {{ trophy(metrics.rankings.avg_min_time_event < 2,"First !", "I know when you arrive the morning !") }}
   {{ trophy(metrics.rankings.avg_max_time_event < 2,"Last !", "I know when you leave the evening !") }}
-  {{ trophy(metrics.perc_events < 0.01,"Stalker", "I record everythings, maybe i'm a NSA bot ...") }}
   {{ trophy(metrics.rankings.sum_hashtags < 3,"#hashtags", "I always add some context, it helps to understand.") }}
   {{ trophy(metrics.rankings.sum_laughs < 3,"Good audience", "If you tell me a joke - even bad - maybe i will joke ... and not only because i'm polite") }}
 </div>

@@ -45,7 +45,10 @@ class ParticipantMetrics(MetricsItem):
             "earliest_event": Calculus(lambda acc_hms_per_ymd: metrics.closest_event(acc_hms_per_ymd,5,min)), # min time event - incremental / default dict listed HMS per Ymd
             "avg_max_time_event": Calculus(lambda acc_hms_per_ymd:median_low(sorted((max(l) for l in acc_hms_per_ymd.itervalues())))) ,  # median low time of last daily event - default dict listed HMS per Ymd
             "avg_min_time_event": Calculus(lambda acc_hms_per_ymd:median_low(sorted((min(l) for l in acc_hms_per_ymd.itervalues())))) , # median low time of first daily event - default dict listed HMS per Ymd
-            "max_dow_events" : Calculus(lambda acc_event_per_dow:max_counter_key(acc_event_per_dow))
+            "max_dow_events" : Calculus(lambda acc_event_per_dow:max_counter_key(acc_event_per_dow)), # dow with max event over all time
+            "sum_weekends_events" : Calculus(lambda acc_event_per_dow: acc_event_per_dow[5] + acc_event_per_dow[6]), # total sum events on weekends
+            "sum_nights_events" : Calculus(lambda acc_event_per_hm: reduce(lambda x,y: x + (y[1] if "2000" <= y[0] or y[0] <= "0800" else 0), acc_event_per_hm.iteritems(),0)), # total sum events on night
+            "sum_best_links" : Calculus(lambda uid,g_best_links: len(g_best_links[uid])) # total sum events on night
         }
 
         self._accumulators = {
@@ -108,7 +111,10 @@ class ScoreMetrics(MetricsItem):
             "sum_coffee": True,
             "sum_chouquette": True,
             "avg_max_time_event": True,
-            "avg_min_time_event": False
+            "avg_min_time_event": False,
+            "sum_weekends_events": True,
+            "sum_nights_events": True,
+            "sum_best_links": True
         }
 
         # Here is all ranked metrics computed
@@ -193,6 +199,7 @@ class HangoutStatisticEngine:
         # update participant final metrics
         for p in self.participants_metrics.itervalues():
             values["name"] = p.participant.name
+            values["uid"] = p.participant.uid
             values.update(p.metrics())
             for key,calculus in p.iter_final_metrics():
                 calculus.update(**values)
