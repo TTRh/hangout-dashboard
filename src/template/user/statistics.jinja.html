@@ -9,8 +9,8 @@
   {{ item(metrics.max_dow_events|dow|truncate(3,True,''),"most active day of week") }}
   {{ item(metrics.sum_nights_events,"total number of events on nights") }}
   {{ item(metrics.sum_weekends_events,"total number of events on weekends") }}
-  {{ item(metrics.earliest_event|slice(3)|map('join')|join(':')|truncate(5,True,''),"wtf earliest time event") }}
-  {{ item(metrics.lastest_event|slice(3)|map('join')|join(':')|truncate(5,True,''),"wtf lastest time event") }}
+  {{ item(metrics.earliest_event|slice(3)|map('join')|join(':')|truncate(5,True,''),"earliest time event") }}
+  {{ item(metrics.lastest_event|slice(3)|map('join')|join(':')|truncate(5,True,''),"lastest time event") }}
   {{ item(metrics.sum_reference,"total first name apparition") }}
   {{ item(metrics.sum_laughs,"total number laughs") }}
   {% if metrics.sum_coffee > 0 %}
