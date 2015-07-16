@@ -16,7 +16,7 @@
   {{ trophy(metrics.rankings.sum_reference < 3 and metrics.perc_events > 0.01,"Famous", "Shoot me i'm famous ! Everybody talks about me ...") }}
   {{ trophy(metrics.rankings.sum_events == 0, "Lord Master King", "I'm the first contributor ! I run the universe !") }}
   {{ trophy(metrics.rankings.sum_characters < 4 or metrics.rankings.sum_words < 4 or metrics.rankings.sum_events < 4 ,"Main contributor", "What ?? Heuu ... ahem ... but my compilations are sooo long ...") }}
-  {{ trophy(metrics.rankings.sum_characters > 4 and metrics.rankings.sum_words > 4 and metrics.rankings.sum_events > 4 and metrics.perc_events > 0.01 ,"Amateur contributor", "I'm a young padawan, but i'm a fast learner ...") }}
+  {{ trophy(metrics.rankings.sum_characters >= 4 and metrics.rankings.sum_words >= 4 and metrics.rankings.sum_events >= 4 and metrics.perc_events >= 0.01 ,"Amateur contributor", "I'm a young padawan, but i'm a fast learner ...") }}
   {{ trophy(metrics.perc_events < 0.01,"Stalker", "I record everythings, maybe i'm a NSA bot ...") }}
   {{ trophy(metrics.rankings.sum_chouquette < 3,"Hungry", "Subscribe to alert chouquette channel ! To get a sleep, i count chouquettes from Robillard delivery ...") }}
   {{ trophy(metrics.rankings.sum_url < 4,"Bot", "I'm a real bot crawler ! I already post your gif newbie !") }}
