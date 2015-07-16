@@ -68,7 +68,7 @@ def update_favorite_words(acc_words,g_corpus):
     ftd = lambda n: 0.5 + (0.5*n/total_user_words)/max_ftd
     idf = lambda w: log(1.0*total_users/reduce(lambda x,y: x + (1 if w in y else 0),g_corpus.itervalues(),0))
     tfidf = OrderedDict(sorted(((w,ftd(n)*idf(w)) for w,n in acc_words.iteritems()), key=lambda x:x[1], reverse=True))
-    return tfidf.items()[:30]
+    return filter(lambda x:x[1] > 1, tfidf.iteritems())[:50]
 
 def shift_hour(hms,hour):
     h_shift = str((int(hms[:2]) + hour)%24)
