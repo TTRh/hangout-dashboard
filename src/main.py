@@ -25,7 +25,7 @@ def main(argv):
 
     # 3 - compute statistics
     hs = HangoutStatisticEngine(hg)
-    hs.conversations = ["UgybBVlmYKlQ5IF4Ccl4AaABAQ"]
+    hs.conversations = ["UgybBVlmYKlQ5IF4Ccl4AaABAQ","Ugw3YvIwot8EY4-YOPR4AaABAQ"]
     hs.run()
 
     # 4 - dump statistics
