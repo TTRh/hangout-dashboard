@@ -22,7 +22,7 @@ def main(argv):
     hg = Hangout()
 
     # 2 - read hangout file, fill and describe
-    hr = HangoutReader(args.jsonfile,hg,"../data/user.json")
+    hr = HangoutReader(args.jsonfile,hg,"data/user.json")
     hr.read()
     hg.describe()
 
@@ -36,8 +36,8 @@ def main(argv):
     # hsw.write('HangoutsStatistic.json')
 
     # 5 - dump hangout dashboard
-    hsd = HangoutStatisticHtmlWriter(hs,"../data/user.json")
-    hsd.write('../web')
+    hsd = HangoutStatisticHtmlWriter(hs,"data/user.json")
+    hsd.write('web')
 
 if __name__ == '__main__':
     main(sys.argv)

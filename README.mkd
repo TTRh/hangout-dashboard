@@ -1,0 +1,30 @@
+Hangout Monitor
+===============
+
+What is that ?
+--------------
+
+It enable to extract some hangout conversation data, compute some cool statistics and create a funny dashboard.
+
+The computation part is made by python scripts in src/
+The web monitor part is deployed in web/
+
+How to re-run it ?
+-----------------
+
+To check depedencies :
+    
+    ./configure.sh
+
+  * You need Jinja2 (a python web template engine)
+  * You need some web compoments (ihover/jquery/jquerysparkline/bootstrap/fontawesome)
+
+To update a dashboard :
+
+    python src/main.py <path/to/Hangout.json>
+
+You can set some parameters in main.py :
+  
+  * the location to dump html files (default is web/)
+  * the location to user avatar files (default is data/user.json)
+  * the ids of hangout's conversations

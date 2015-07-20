@@ -1,4 +1,8 @@
 TODO:
+  - improve main.py
+    * give more parameters in commande line
+    * can be run from any where
+    @ Added [mar. 2015-07-21]
   - add interaction measure between peoples
     * compute interaction by number of closed events
     @ Added [lun. 2015-07-20]

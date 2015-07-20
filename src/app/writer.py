@@ -19,7 +19,7 @@ def dow(n):
 
 class HangoutStatisticHtmlWriter:
 
-    _template_dir = "template"
+    _template_dir = "src/template"
 
     def __init__(self,statistics,user_info_file=None):
         self.statistics = statistics
