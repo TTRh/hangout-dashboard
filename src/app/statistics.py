@@ -7,7 +7,6 @@ class ParticipantMetrics(MetricsItem):
 
     def __init__(self,participant):
         self.participant = participant
-
         # Here is all participants statistics
         self._statistics = {
             # text
@@ -50,7 +49,6 @@ class ParticipantMetrics(MetricsItem):
             "sum_nights_events" : Calculus(lambda acc_event_per_hm: reduce(lambda x,y: x + (y[1] if "2000" <= y[0] or y[0] <= "0800" else 0), acc_event_per_hm.iteritems(),0)), # total sum events on night
             "sum_best_links" : Calculus(lambda uid,g_best_links: len(g_best_links[uid])) # total sum events on night
         }
-
         self._accumulators = {
             "acc_event_per_ym" : Calculus(lambda x,ym: x.update([ym]),Counter()),
             "acc_event_per_ymd" : Calculus(lambda x,ymd: x.update([ymd]),Counter()),
@@ -63,7 +61,6 @@ class ParticipantMetrics(MetricsItem):
             "acc_words" : Calculus(lambda x,words: x.update(iter_words(words)),Counter()),
             "acc_words_per_event" : Calculus(lambda x,words:x.append(len(words)) if len(words) > 0 else None,[])
         }
-
         self._metrics = {}
         self._metrics.update(self._statistics)
         self._metrics.update(self._accumulators)
@@ -71,12 +68,11 @@ class ParticipantMetrics(MetricsItem):
     def statistics(self):
         return { key:self.metrics(key) for key in self._statistics.iterkeys() }
 
+
 class GlobalMetrics(MetricsItem):
 
     def __init__(self):
-
         self.re_participant_aliases = {}
-
         # Here is all global metrics computed
         self._metrics = {
             "max_ym" : Calculus(lambda g_acc_ym:max(g_acc_ym)),
@@ -116,7 +112,6 @@ class ScoreMetrics(MetricsItem):
             "sum_nights_events": True,
             "sum_best_links": True
         }
-
         # Here is all ranked metrics computed
         self._metrics = {
             "ranks" : Calculus(metrics.update_ranked,None,ranked_metrics=self._ranked_metrics),
@@ -155,9 +150,9 @@ class HangoutStatisticEngine:
         # update part
         self._remove_inactive_users()
         self._update_metrics()
-        print self.participants_metrics["100004041546029582490"].statistics()
+        # print self.participants_metrics["100004041546029582490"].statistics()
         # print self.participants_metrics["109861864489840763994"].statistics()
-        print self.global_metrics.metrics("g_alias")
+        # print self.global_metrics.metrics("g_alias")
         # print self.global_metrics.metrics("g_best_links")
 
     def _collect_metrics(self,event):
