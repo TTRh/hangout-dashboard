@@ -19,6 +19,10 @@ To check depedencies :
   * You need Jinja2 (a python web template engine)
   * You need some web compoments (ihover/jquery/jquerysparkline/bootstrap/fontawesome)
 
+To download hangout data :
+
+  * create an hangout archive from your google account : https://www.google.com/settings/takeout
+
 To update a dashboard :
 
     python src/main.py <path/to/Hangout.json>
