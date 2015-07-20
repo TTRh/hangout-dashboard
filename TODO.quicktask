@@ -1,4 +1,7 @@
 TODO:
+  - update configure.sh
+    * check pyhton dependencies
+    @ Added [mar. 2015-07-21]
   - improve main.py
     * give more parameters in commande line
     * can be run from any where
