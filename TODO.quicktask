@@ -1,12 +1,32 @@
-GENERAL:
-  - raw data
-    * conversion_id,user_id,user_name,timestamp,message
-    @ Added [Thu 2015-06-18]
-  - consolidation
-    * use others conversation to fetch username
-    @ Added [Thu 2015-06-18]
-  - vizualization
-    * scatte plot with multi user ?
-    * profil card with nice stats by users
-    @ Added [Thu 2015-06-18]
-  
+TODO:
+  - add interaction measure between peoples
+    * compute interaction by number of closed events
+    @ Added [lun. 2015-07-20]
+  - make it mobile responsive
+    @ Added [lun. 2015-07-20]
+  - common sentence/event
+    * score each words + sum score of sentence/event
+    @ Added [lun. 2015-07-20]
+  - add quote
+    * "something" - Full Name
+    @ Added [lun. 2015-07-20]
+  - improve best links extract
+    * check dead links
+    * sort on type gif/google content/newspapers etc ...
+    * filter with a score
+    @ Added [lun. 2015-07-20]
+  - improve favorite/specific words
+    * test other tfidf formula without biais over long corpus
+    @ Added [lun. 2015-07-20]
+  - count longs words
+    * total number of words over n characters + trohpy ?
+    @ Added [lun. 2015-07-20]
+  - detect rich event
+    * count words over n characters / intersting words / rare words / avg words characters / tfidf / long events ?
+    @ Added [lun. 2015-07-20]
+  - check if words is in a dict for uniq words stats
+    @ Added [lun. 2015-07-20]
+  - add /me as new extract
+    @ Added [lun. 2015-07-20]
+
+
