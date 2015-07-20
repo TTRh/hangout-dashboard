@@ -6,8 +6,7 @@ What is that ?
 
 It enable to extract some hangout conversation data, compute some cool statistics and create a funny dashboard.
 
-The computation part is made by python scripts in src/
-The web monitor part is deployed in web/
+Computation part is made by python scripts in src/ by parsing Hangouts.json data file. The web monitor is deployed in web/ by a python writer using the python web template engine : Jinja2.
 
 How to re-run it ?
 -----------------
@@ -19,11 +18,11 @@ To check depedencies :
   * You need Jinja2 (a python web template engine)
   * You need some web compoments (ihover/jquery/jquerysparkline/bootstrap/fontawesome)
 
-To download hangout data :
+To download your own hangout data :
 
   * create an hangout archive from your google account : https://www.google.com/settings/takeout
 
-To update a dashboard :
+To update the dashboard :
 
     python src/main.py <path/to/Hangout.json>
 
@@ -31,4 +30,6 @@ You can set some parameters in main.py :
   
   * the location to dump html files (default is web/)
   * the location to user avatar files (default is data/user.json)
-  * the ids of hangout's conversations
+  * the list of ids hangout conversations
+
+To vizualize the doashboard, put web/ directory through any web server.
