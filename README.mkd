@@ -25,12 +25,9 @@ To have nice image and user name on dashboard you can also update this file : `d
 
 ### Run it
 
-  1.  Parse the hangout data, compute statistics and write html dashboard
-      
-    python src/main.py <path/to/Hangouts.json> 
+Simply run the python script to parse, compute statistics and dump all html files. Then put the `web/` directory through any web server.
 
-  2.  Put the `web/` directory through any web server
-  
+    python src/main.py <path/to/Hangouts.json>
     ln -s web /var/www/hangout
 
 You can also update some parameters in main.py :
