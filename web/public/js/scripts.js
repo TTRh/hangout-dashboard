@@ -67,13 +67,11 @@ function update_tooltip() {
 
 // animate progress bar on page load
 function update_progress_bar() {
-	$('.item-skills').each(function(){
-		newWidth = $(this).parent().width() * $(this).data('percent');
-		$(this).width(0);
-    $(this).animate({
-        width: newWidth,
-    }, 1000);
-	});
+  $('.item-skills').each(function(){
+    newWidth = $(this).parent().width() * $(this).data('percent');
+    $(this).width(0);
+    $(this).animate({ width: newWidth }, 1000);
+  });
 }
 
 /***************************************
@@ -99,8 +97,8 @@ var reload_on_resize = function() {
 // animate progress bar on resize bar
 var resize;
 window.onresize = function() {
-	clearTimeout(resize);
-	resize = setTimeout(function(){
-		reload_on_resize();
-	}, 100);
+  clearTimeout(resize);
+  resize = setTimeout(function(){
+    reload_on_resize();
+    }, 100);
 };
