@@ -6,30 +6,29 @@ What is that ?
 
 It enable to extract some hangout conversation data, compute some cool statistics and create a funny dashboard.
 
-Computation part is made by python scripts in src/ by parsing Hangouts.json data file. The web monitor is deployed in web/ by a python writer using the python web template engine : Jinja2.
+Computation part is made by python scripts by parsing `Hangouts.json` data file. The web monitor is written down using the python web template engine : Jinja2.
 
-How to re-run it ?
------------------
+How to update the monitor ?
+---------------------------
 
-To check depedencies :
-    
+### Check depedencies
+
     ./configure.sh
 
-  * You need Jinja2 (a python web template engine)
-  * You need some web compoments (ihover/jquery/jquerysparkline/bootstrap/fontawesome)
+  * you need [Jinja2](http://jinja.pocoo.org/docs/dev/) a python web template engine
+  * you need some web compoments (ihover/jquery/jquerysparkline/bootstrap/fontawesome)
 
-To download your own hangout data :
+### Download your own hangout data
 
-  * create an hangout archive from your google account : https://www.google.com/settings/takeout
+You can create an hangout archive from your google account : https://www.google.com/settings/takeout
 
-To update the dashboard :
+### Run it
 
-    python src/main.py <path/to/Hangout.json>
+  1.  run the script to parse the hangout data, compute statistics and write all html pages : `python src/main.py <path/to/Hangouts.json>`
+  2.  put the web/ directory through any web server, ex : `ln -s web/ /var/www/hangout/`
 
-You can set some parameters in main.py :
-  
+You can update some parameters in main.py :
+
   * the location to dump html files (default is web/)
-  * the location to user avatar files (default is data/user.json)
-  * the list of ids hangout conversations
-
-To vizualize the doashboard, put web/ directory through any web server.
+  * the user the avatar files (default is data/user.json, needed to get all avatar and full names, update it with your own data )
+  * the list of ids hangout conversations you want to
