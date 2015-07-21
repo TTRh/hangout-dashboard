@@ -11,24 +11,25 @@ Computation part is made by python scripts by parsing `Hangouts.json` data file.
 How to update the monitor ?
 ---------------------------
 
-### Check depedencies
+### Check dependencies
 
-    ./configure.sh
+  1. `./configure.sh` : to check dependencies
 
-  * you need [Jinja2](http://jinja.pocoo.org/docs/dev/) a python web template engine
-  * you need some web compoments (ihover/jquery/jquerysparkline/bootstrap/fontawesome)
+  * you need [Jinja2](http://jinja.pocoo.org/docs/dev/) a templating python engine
+  * you need some web compoments (ihover,jquery,jquery sparkline,bootstrap,fontawesome)
 
 ### Download your own hangout data
 
-You can create an hangout archive from your google account : https://www.google.com/settings/takeout
+You can get your own hangout archive from your google account : [Google Takeout](https://www.google.com/settings/takeout).
+To have nice image and user name on dashboard you can also update this file : `data/user.json` which give user's avatar and full name.
 
 ### Run it
 
-  1.  run the script to parse the hangout data, compute statistics and write all html pages : `python src/main.py <path/to/Hangouts.json>`
-  2.  put the web/ directory through any web server, ex : `ln -s web/ /var/www/hangout/`
+  1.  `python src/main.py <path/to/Hangouts.json>` : parse the hangout, compute statistics, write html
+  2.  `ln -s web/ /var/www/hangout/` : put the `web/` directory through any web server
 
-You can update some parameters in main.py :
+You can also update some parameters in main.py :
 
-  * the location to dump html files (default is web/)
-  * the user the avatar files (default is data/user.json, needed to get all avatar and full names, update it with your own data )
-  * the list of ids hangout conversations you want to
+  * the directory location to dump html files (default is `web/`)
+  * the user info file location, needed to get all avatars and full names. (default is `data/user.json`)
+  * the list of conversation id you want in satistics
