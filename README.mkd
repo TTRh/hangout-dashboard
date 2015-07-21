@@ -13,7 +13,7 @@ How to update the monitor ?
 
 ### Check dependencies
 
-  1. `./configure.sh` : to check dependencies
+    ./configure.sh
 
   * you need [Jinja2](http://jinja.pocoo.org/docs/dev/) a templating python engine
   * you need some web compoments (ihover,jquery,jquery sparkline,bootstrap,fontawesome)
@@ -25,11 +25,21 @@ To have nice image and user name on dashboard you can also update this file : `d
 
 ### Run it
 
-  1.  `python src/main.py <path/to/Hangouts.json>` : parse the hangout, compute statistics, write html
-  2.  `ln -s web/ /var/www/hangout/` : put the `web/` directory through any web server
+  1.  Parse the hangout data, compute statistics and write html dashboard
+      
+    python src/main.py <path/to/Hangouts.json> 
+
+  2.  Put the `web/` directory through any web server
+  
+    ln -s web /var/www/hangout
 
 You can also update some parameters in main.py :
 
   * the directory location to dump html files (default is `web/`)
   * the user info file location, needed to get all avatars and full names. (default is `data/user.json`)
   * the list of conversation id you want in satistics
+
+TODO
+----
+
+Check TODO.quicktask
